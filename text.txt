@@ -1,0 +1,8 @@
+Sysmon.exe -accepteula -i noisy-sysmon.xml
+Sysmon64.exe -accepteula -i noisy-sysmon.xml
+
+Sysmon64.exe -accepteula -c noisy-sysmon.xml
+
+wevtutil sl Microsoft-Windows-Sysmon/Operational /ms:268435456 /AutoBackup:true /Retention:true
+
+wevtutil sl Microsoft-Windows-PowerShell/Operational /ms:268435456 /AutoBackup:true /Retention:true
