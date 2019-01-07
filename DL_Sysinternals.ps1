@@ -1,11 +1,11 @@
 
-Import-Module BitsTransfer
+#Import-Module BitsTransfer
 
-$DLRoot = "C:\temp\DL_Sysinternals"
+$DLRoot = "C:\temp"
 
 $url1 = "https://download.sysinternals.com/files/SysinternalsSuite.zip"
 $url2 = "https://download.sysinternals.com/files/SysinternalsSuite-Nano.zip"
-$url3 = "https://github.com/cash00/PS-Scripts/blob/master/ok-sysmon.xml"
+$url3 = "https://raw.githubusercontent.com/cash00/PS-Scripts/master/ok-sysmon.xml"
 
 $output1 = "$DLRoot\SysinternalsSuite.zip"
 $output2 = "$DLRoot\SysinternalsSuite-Nano.zip"
@@ -18,38 +18,49 @@ If ((Test-Path $DLRoot) -eq $false)
     New-Item $DLRoot -type directory
 }
 
+<#
 #Start-BitsTransfer -Source $url -Destination $output
 #OR
-Start-BitsTransfer -Source $url1 -Destination $output1 -Priority High #-Asynchronous
-Start-BitsTransfer -Source $url2 -Destination $output2 -Priority High #-Asynchronous
-Start-BitsTransfer -Source $url3 -Destination $output3 -Priority High #-Asynchronous
-
-Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)"
-
-Get-BitsTransfer -AllUsers | Where-Object { $_.JobState -like "TransientError" } | Remove-BitsTransfer
+Start-BitsTransfer -Source $url1 -Destination $output1 -Priority High -Asynchronous
+Start-BitsTransfer -Source $url2 -Destination $output2 -Priority High -Asynchronous
+Start-BitsTransfer -Source $url3 -Destination $output3 -Priority High -Asynchronous
+#>
 
 If ((Test-Path $output1) -eq $false)
 {
-    Write-Output "No Have " $output1" !!!"
-    exit
+$wc = New-Object System.Net.WebClient
+$wc.DownloadFile($url1, $output1)
 }
 
 If ((Test-Path $output2) -eq $false)
 {
-    Write-Output "No Have" $output2" !!!"
-    exit
+$wc = New-Object System.Net.WebClient
+$wc.DownloadFile($url2, $output2)
+#$wc.DownloadFileAsync($url2, $output2)
 }
+
+#OR
 
 If ((Test-Path $output3) -eq $false)
 {
-    Write-Output "No Have" $output3" !!!"
-    exit
+(New-Object System.Net.WebClient).DownloadFileAsync($url3, $output3)
 }
 
+Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)"
 
+#Get-BitsTransfer -AllUsers | Where-Object { $_.JobState -like "TransientError" } | Remove-BitsTransfer
 
+If ((Test-Path $output1) -eq $true)
+{
+    Write-Output "OK "$output1" !!!"
+}
 
+If ((Test-Path $output2) -eq $true)
+{
+    Write-Output "OK "$output2" !!!"
+}
 
-
-
-
+If ((Test-Path $output3) -eq $true)
+{
+    Write-Output "OK "$output3" !!!"
+}

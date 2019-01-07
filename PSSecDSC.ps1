@@ -14,7 +14,7 @@ For reference, here are the registry keys involved:
 HKLM:\Software\Policies\Microsoft\Windows\PowerShell\Transcription
 EnableTranscripting,1
 OutputDirectory,[Path]
-IncludeInvocationHeader,1
+EnableInvocationHeader,1
 
 HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging
 EnableScriptBlockLogging,1
@@ -42,24 +42,31 @@ against any claims or lawsuits, including attorneys’ fees, that arise or resul
 from the use or distribution of the Sample Code.
 ##############################################################################>
 
+.\DL_Sysinternals.ps1
+
 Configuration EnablePowerShellLogging
 {
 Param(
-    [string]
-    $TranscriptPath = 'C:\PSTranscripts',
-    [ValidateRange(1,365)]
-    [int]
-    $TranscriptDays = 14,
-    [ValidateRange(1,1024)]
-    [int]
-    $EventLogSizeInMB = 256
-)
+    [string]$TranscriptPath = 'C:\Temp\PSTranscripts',
+    [ValidateRange(1,365)][int]$TranscriptDays = 14,
+    [ValidateRange(1,1024)][int]$EventLogSizeInMB = 256,
+    [string]$WindowsEventLogsPath = 'G:\WindowsEventLogs',
+    [string]$CheckDrive = 'G:' #G:\WindowsEventLogs
+
+) #G:\WindowsEventLogs\PSTranscripts
 
     Import-DscResource -ModuleName PSDesiredStateConfiguration
 
     Node localhost
     {
-        Archive Unzip #Unzip file
+        File SysinternalsSuiteFile
+        {
+            DestinationPath = 'C:\Temp\SysinternalsSuite.zip'
+            Type            = 'File'
+            #Ensure          = 'Present'
+        }
+
+        Archive UnzipSysinternalsSuiteFile #Unzip file
         {
             Destination = 'C:\SysinternalsSuite'
             Path = 'C:\Temp\SysinternalsSuite.zip'
@@ -67,20 +74,74 @@ Param(
             Validate = $true
             Force = $true
             Ensure = 'Present'
+            DependsOn = '[File]SysinternalsSuiteFile'
         }
-         
-        File InstallerFile #File is a DSC Resource
+        
+        File SysmonOKConfigFile
+        {
+            DestinationPath = 'C:\Temp\ok-sysmon.xml'
+            Type            = 'File'
+            #Ensure          = 'Present'
+        }
+
+        File CheckSysmonOKConfigFile #File is a DSC Resource
         {
            Ensure = 'Present'
            SourcePath = 'C:\Temp\ok-sysmon.xml'
            DestinationPath = 'C:\SysinternalsSuite\ok-sysmon.xml'
+           MatchSource = $true
+           DependsOn = '[File]SysmonOKConfigFile'
         }
 
+        ### Check For Sysmon Service #####################################################
+        Script CheckSysmonService
+        {
+            GetScript = {
+                
+                Return @{Result = 
+                    If ((Get-Service | where "Name" -Like 'Sysmon*').Status -eq $null)
+                    {
+                        $False
+                    }
+                    else
+                    {
+                        $True
+                    }
+                }
+
+            }
+
+            TestScript = {
+                
+                If ((Get-Service | where "Name" -Like 'Sysmon*').Status -eq $null)
+                {
+                    Write-Verbose ' is NOT in desired state.'
+                    Return $false
+                }
+                else
+                {
+                    Write-Verbose ' is in desired state.'
+                    Return $true
+                }
+
+            }
+
+            SetScript = {
+                
+                & C:\SysinternalsSuite\Sysmon.exe -accepteula -i C:\SysinternalsSuite\ok-sysmon.xml
+                
+            }
+            DependsOn = '[File]CheckSysmonOKConfigFile'
+        }
+
+        <#
         WindowsProcess Sysmon 
         {
-            Path = 'C:\SysinternalsSuite\Sysmon.exe'
-            Arguments = '-accepteula -i C:\SysinternalsSuite\noisy-sysmon.xml'
+            Path = 'C:\Windows\Sysmon.exe'
+            Arguments = '-accepteula -i C:\SysinternalsSuite\ok-sysmon.xml'
+            DependsOn = '[File]CheckSysmonOKConfigFile'
         }
+        #>
 
         WindowsFeature PowerShellV2 #ResourceName
         {
@@ -110,7 +171,7 @@ Param(
             Ensure    = 'Present'
         }
 
-        Registry ScriptExecution
+        Registry ExecutionPolicy
         {
             Key       = 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell'
             ValueName = 'ExecutionPolicy'
@@ -120,7 +181,7 @@ Param(
         }
 
         ### Script Block Logging ##############################################
-        Registry ScriptBlockLogging
+        Registry EnableScriptBlockLogging
         {
             Key       = 'HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging'
             ValueName = 'EnableScriptBlockLogging'
@@ -143,7 +204,7 @@ Param(
         #>
 
         ### Module Logging ##############################################
-        Registry ModuleLogging
+        Registry EnableModuleLogging
         {
             Key       = 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ModuleLogging'
             ValueName = 'EnableModuleLogging'
@@ -168,9 +229,10 @@ Param(
                     Result = Get-WinEvent -ListLog Microsoft-Windows-PowerShell/Operational | Out-String
                 }
             }
+
             TestScript = {
                 $Log = Get-WinEvent -ListLog Microsoft-Windows-PowerShell/Operational
-                If ($Log.LogMode -ne 'Circular' -or $Log.MaximumSizeInBytes -lt ($using:EventLogSizeInMB * 1MB)) {
+                If ($Log.LogMode -ne 'AutoBackup' -or $Log.MaximumSizeInBytes -lt ($using:EventLogSizeInMB * 1MB)) {
                     Write-Verbose 'Event log [Microsoft-Windows-PowerShell/Operational] is NOT in desired state.'
                     Return $false
                 } Else {   
@@ -178,16 +240,93 @@ Param(
                     Return $true
                 }
             }
+
             SetScript = {
                 Write-Verbose 'Applying settings to event log [Microsoft-Windows-PowerShell/Operational].'
                 wevtutil set-log Microsoft-Windows-PowerShell/Operational /AutoBackup:true /Retention:true /maxsize:$($using:EventLogSizeInMB * 1MB)
             }
         }
 
+        Script SysmonLogSize
+        {
+            GetScript = {
+                Return @{
+                    Result = Get-WinEvent -ListLog Microsoft-Windows-Sysmon/Operational | Out-String
+                }
+            }
+
+            TestScript = {
+                $Log = Get-WinEvent -ListLog Microsoft-Windows-Sysmon/Operational
+                If ($Log.LogMode -ne 'AutoBackup' -or $Log.MaximumSizeInBytes -lt ($using:EventLogSizeInMB * 1MB)) {
+                    Write-Verbose 'Event log [Microsoft-Windows-Sysmon/Operational] is NOT in desired state.'
+                    Return $false
+                } Else {   
+                    Write-Verbose 'Event log [Microsoft-Windows-Sysmon/Operational] is in desired state.'
+                    Return $true
+                }
+            }
+
+            SetScript = {
+                Write-Verbose 'Applying settings to event log [Microsoft-Windows-Sysmon/Operational].'
+                wevtutil set-log Microsoft-Windows-Sysmon/Operational /AutoBackup:true /Retention:true /maxsize:$($using:EventLogSizeInMB * 1MB)
+            }
+            DependsOn = '[Script]CheckSysmonService'
+        }
+
         ### Transcription #####################################################
 
-        ### Remove this resource if sending transcripts to a remote share.
-        File TranscriptsDirectory
+        ### Check For G: drive #####################################################
+        Script CheckGDrive
+        {
+            GetScript = {
+
+                Return @{Result = test-path $using:CheckDrive | Out-String}
+
+            }
+
+            TestScript = {
+
+                If (!(test-path $using:CheckDrive))
+                {
+                    Write-Verbose ' is NOT in desired state.'
+                    Return $false
+                }
+                Else
+                {   
+                    Write-Verbose ' is in desired state.'
+                    Return $true
+                }
+
+            }
+
+            SetScript = {
+
+                #New-Item -Path $path -ItemType directory
+                If (!(test-path $using:CheckDrive))
+                {
+                    Write-Verbose ' is NOT in desired state.'
+                    Return $false
+                }
+                Else
+                {   
+                    Write-Verbose ' is in desired state.'
+                    Return $true
+                }
+
+            }
+
+        }
+
+        File WindowsEventLogs
+        {
+            DestinationPath = $WindowsEventLogsPath
+            Type            = 'Directory'
+            Ensure          = 'Present'
+            DependsOn = '[Script]CheckGDrive'
+        }
+
+        ### Remove this resource if sending Transcripts to a remote share.
+        File TranscriptsOutputDirectory
         {
             DestinationPath = $TranscriptPath
             Type            = 'Directory'
@@ -195,7 +334,7 @@ Param(
         }
 
         ### Remove this resource if sending transcripts to a remote share.
-        Script TranscriptsDirectoryPermissions
+        Script TranscriptsOutputDirectoryPermissions
         {
             GetScript = {
                 $acl = Get-Acl $using:TranscriptPath
@@ -206,7 +345,7 @@ Param(
             TestScript = {
                 $acl = Get-Acl $using:TranscriptPath
                 Write-Verbose "Transcript directory permissions: $($acl.Sddl)"
-                If ($acl.Sddl -ne 'O:BAG:DUD:PAI(D;OICIIO;FA;;;CO)(A;OICI;0x100196;;;WD)(A;OICI;FA;;;BA)') {
+                If ($acl.Sddl -ne 'O:BAG:BAD:AI(A;OICI;FA;;;BA)(A;OICIID;FA;;;SY)(A;OICIID;0x1200a9;;;BU)(A;OICI;0x1301bf;;;BU)') {
                     Write-Verbose 'Transcript directory permissions are NOT in desired state.'
                     Return $false
                 } Else {   
@@ -218,13 +357,14 @@ Param(
                 Write-Verbose 'Applying transcript directory permissions.'
                 # Remove inherited permissions.
                 # Allow Administrators full control.
-                # Allow Everyone Write and ReadAttributes.
-                # Deny CreatorOwner Full Control.
+                # Allow SYSTEM full control.
+                # Allow Users Read and Execute.
+                # Allow Users Modify.
                 $acl = Get-Acl $using:TranscriptPath
-                $acl.SetSecurityDescriptorSddlForm('O:BAG:DUD:PAI(D;OICIIO;FA;;;CO)(A;OICI;0x100196;;;WD)(A;OICI;FA;;;BA)')
+                $acl.SetSecurityDescriptorSddlForm('O:BAG:BAD:AI(A;OICI;0x1301bf;;;BU)') #(A;OICIID;FA;;;SY)(A;OICIID;0x1200a9;;;BU)
                 $acl | Set-Acl $using:TranscriptPath -Verbose
             }
-            DependsOn = '[File]TranscriptsDirectory'
+            DependsOn = '[File]TranscriptsOutputDirectory'
         }
 
         ### Remove this resource if sending transcripts to a remote share.
@@ -261,10 +401,10 @@ Param(
                     Write-Warning 'Access denied to some of the transcript files.'
                 }
             }
-            DependsOn = '[File]TranscriptsDirectory'
+            DependsOn = '[File]TranscriptsOutputDirectory'
         }
 
-        Registry Transcription
+        Registry EnableTranscripting
         {
             Key       = 'HKLM:\Software\Policies\Microsoft\Windows\PowerShell\Transcription'
             ValueName = 'EnableTranscripting'
@@ -278,7 +418,7 @@ Param(
         Registry TranscriptionInvocationHeader
         {
             Key       = 'HKLM:\Software\Policies\Microsoft\Windows\PowerShell\Transcription'
-            ValueName = 'IncludeInvocationHeader'
+            ValueName = 'EnableInvocationHeader'
             ValueData = '1'
             ValueType = 'DWord'
             Ensure    = 'Present'
@@ -292,8 +432,10 @@ Param(
             ValueData = $TranscriptPath
             ValueType = 'String'
             Ensure    = 'Present'
+            DependsOn = '[File]TranscriptsOutputDirectory'
         }
 
+        ### Enable PowerShell Constraint mode ##############################################
         Registry PSLockdownPolicy
         {
             Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment'
@@ -310,16 +452,22 @@ Param(
 cd c:\temp
 EnablePowerShellLogging
 Start-DscConfiguration -Path C:\temp\EnablePowerShellLogging -Wait -Verbose -Force
-
+"1"
 ###############################################################################
+"2"
 break
+"3"
 
 Get-DscConfiguration
 
 dir 'HKLM:\Software\Policies\Microsoft\Windows\PowerShell' -Recurse
+dir 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment'
 
+"4"
 ###############################################################################
+"5"
 break
+"6"
 
 Configuration DisablePowerShellLogging
 {
@@ -362,12 +510,15 @@ Param(
 cd c:\temp
 DisablePowerShellLogging
 Start-DscConfiguration -Path C:\temp\DisablePowerShellLogging -Wait -Verbose -Force
+"7"
 
 break
+"8"
 
 dir 'HKLM:\Software\Policies\Microsoft\Windows\PowerShell' -Recurse
 
 ###############################################################################
+"9"
 break
 
 # Note that the PowerShell policy is cached when the ISE or Console is opened.
