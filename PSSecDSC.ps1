@@ -143,6 +143,50 @@ Param(
         }
         #>
 
+        File ZabbixConfFile
+        {
+            DestinationPath = 'C:\Temp\zabbix_agentd.win.conf'
+            Type            = 'File'
+            #Ensure          = 'Present'
+        }
+
+        File Zabbixi386File
+        {
+            DestinationPath = 'C:\Temp\zabbix_agents-4.0.0-win-i386.zip'
+            Type            = 'File'
+            #Ensure          = 'Present'
+        }
+
+        File Zabbixamd64File
+        {
+            DestinationPath = 'C:\Temp\zabbix_agents-4.0.0-win-amd64.zip'
+            Type            = 'File'
+            #Ensure          = 'Present'
+        }
+
+        Archive Zabbixamd64File #Unzip file
+        {
+            Destination = 'C:\zabbix'
+            Path = 'C:\Temp\zabbix_agents-4.0.0-win-amd64.zip'
+            Checksum = 'SHA-256'
+            Validate = $true
+            Force = $true
+            Ensure = 'Present'
+            DependsOn = '[File]Zabbixamd64File'
+        }
+
+        File CheckZabbixConfFile #File is a DSC Resource
+        {
+           Ensure = 'Present'
+           SourcePath = 'C:\Temp\zabbix_agentd.win.conf'
+           DestinationPath = 'C:\zabbix\zabbix_agentd.win.conf'
+           MatchSource = $true
+           DependsOn = '[File]ZabbixConfFile'
+        }
+
+
+
+
         WindowsFeature PowerShellV2 #ResourceName
         {
             Name = 'PowerShell-V2'
