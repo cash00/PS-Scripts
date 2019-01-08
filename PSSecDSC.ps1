@@ -184,8 +184,23 @@ Param(
            DependsOn = '[File]ZabbixConfFile'
         }
 
+        <#Service ZabbixAgent
+        {
+            Name = 'Zabbix Agent'
+            Ensure = 'Absent'
+        }#>
 
-
+        Service ZabbixAgent
+        {
+            Name = 'Zabbix Agent'
+            BuiltInAccount = 'LocalSystem'
+            Description = 'Zabbix System Monitoring'
+            DisplayName = 'Zabbix Agent'
+            Ensure = 'Present'
+            Path = '"C:\zabbix\bin\zabbix_agentd.exe" --config "C:\zabbix\zabbix_agentd.win.conf"'
+            StartupType = 'Automatic'
+            State = 'Running'
+        }
 
         WindowsFeature PowerShellV2 #ResourceName
         {
