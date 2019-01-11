@@ -1,4 +1,47 @@
-﻿
+﻿<##############################################################################
+Ashley McGlone
+Microsoft Premier Field Engineer
+March 2017
+http://aka.ms/GoateePFE
+
+This is a sample DSC script for implementing the PowerShell logging and
+transcription features described in Lee Holmes' white paper "PowerShell Loves
+the Blue Team".
+https://blogs.msdn.microsoft.com/powershell/2015/06/09/powershell-the-blue-team
+
+For reference, here are the registry keys involved:
+
+HKLM:\Software\Policies\Microsoft\Windows\PowerShell\Transcription
+EnableTranscripting,1
+OutputDirectory,[Path]
+EnableInvocationHeader,1
+
+HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging
+EnableScriptBlockLogging,1
+EnableScriptBlockInvocationLogging,1
+
+(not implemented below)
+HKLM:\Software\Policies\Microsoft\Windows\EventLog\ProtectedEventLogging
+EnableProtectedEventLogging,1
+EncryptionCertificate,[Certificate]
+
+
+LEGAL DISCLAIMER
+This Sample Code is provided for the purpose of illustration only and is not
+intended to be used in a production environment.  THIS SAMPLE CODE AND ANY
+RELATED INFORMATION ARE PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER
+EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE.  We grant You a
+nonexclusive, royalty-free right to use and modify the Sample Code and to
+reproduce and distribute the object code form of the Sample Code, provided
+that You agree: (i) to not use Our name, logo, or trademarks to market Your
+software product in which the Sample Code is embedded; (ii) to include a valid
+copyright notice on Your software product in which the Sample Code is embedded;
+and (iii) to indemnify, hold harmless, and defend Us and Our suppliers from and
+against any claims or lawsuits, including attorneys’ fees, that arise or result
+from the use or distribution of the Sample Code.
+##############################################################################>
+
 .\DL_Sysinternals.ps1
 
 Configuration EnablePowerShellLogging
@@ -97,7 +140,8 @@ Param(
             Path = 'C:\Windows\Sysmon.exe'
             Arguments = '-accepteula -i C:\SysinternalsSuite\ok-sysmon.xml'
             DependsOn = '[File]CheckSysmonOKConfigFile'
-        }#>
+        }
+        #>
 
         File ZabbixConfFile
         {
@@ -120,7 +164,7 @@ Param(
             #Ensure          = 'Present'
         }
 
-        Archive UnzipZabbixamd64File #Unzip file
+        Archive Zabbixamd64File #Unzip file
         {
             Destination = 'C:\zabbix'
             Path = 'C:\Temp\zabbix_agents-4.0.0-win-amd64.zip'
@@ -213,7 +257,8 @@ Param(
             ValueData = 1
             ValueType = 'String'
             Ensure    = 'Present'
-        }#>
+        }
+        #>
 
         ### Module Logging ##############################################
         Registry EnableModuleLogging
@@ -329,14 +374,13 @@ Param(
 
         }
 
-        <#
         File WindowsEventLogs
         {
             DestinationPath = $WindowsEventLogsPath
             Type            = 'Directory'
             Ensure          = 'Present'
             DependsOn = '[Script]CheckGDrive'
-        }#>
+        }
 
         ### Remove this resource if sending Transcripts to a remote share.
         File TranscriptsOutputDirectory
@@ -358,7 +402,7 @@ Param(
             TestScript = {
                 $acl = Get-Acl $using:TranscriptPath
                 Write-Verbose "Transcript directory permissions: $($acl.Sddl)"
-                If ($acl.Sddl -ne 'O:BAG:BAD:AI(A;OICI;0x1301bf;;;BU)') {
+                If ($acl.Sddl -ne 'O:BAG:BAD:AI(A;OICI;FA;;;BA)(A;OICIID;FA;;;SY)(A;OICIID;0x1200a9;;;BU)(A;OICI;0x1301bf;;;BU)') {
                     Write-Verbose 'Transcript directory permissions are NOT in desired state.'
                     Return $false
                 } Else {   
@@ -435,7 +479,8 @@ Param(
             ValueData = '1'
             ValueType = 'DWord'
             Ensure    = 'Present'
-        }#>
+        }
+        #>
 
         Registry TranscriptionPath
         {
@@ -464,3 +509,90 @@ Param(
 cd c:\temp
 EnablePowerShellLogging -OutputPath 'C:\Temp\EnablePowerShellLogging' -Verbose
 #Start-DscConfiguration -Path C:\temp\EnablePowerShellLogging -Wait -Verbose -Force
+"1"
+###############################################################################
+"2"
+break
+"3"
+
+Get-DscConfiguration
+
+dir 'HKLM:\Software\Policies\Microsoft\Windows\PowerShell' -Recurse
+dir 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment'
+
+"4"
+###############################################################################
+"5"
+break
+"6"
+
+Configuration DisablePowerShellLogging
+{
+Param(
+    $Paths = @('HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell','HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ModuleLogging\ModuleNames','HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ModuleLogging','HKLM:\Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging','HKLM:\Software\Policies\Microsoft\Windows\PowerShell\Transcription','HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Environment')
+)
+
+    Import-DscResource -ModuleName PSDesiredStateConfiguration
+
+    Node localhost
+    {
+        # Currently the registry resource does not support deleting an entire
+        # key. So we will delete each key with a script resource.
+        Script RemovePowerShellLogging
+        {
+            GetScript = {
+                Return @{
+                    Result = Get-Item -Path $Using:Paths -ErrorAction SilentlyContinue | Out-String
+                }
+            }
+            TestScript = {
+                If (Get-Item -Path $Using:Paths -ErrorAction SilentlyContinue) {
+                    Write-Verbose "Registry keys for PowerShell logging and/or transcription found."
+                    Return $false
+                } Else {   
+                    Write-Verbose "Registry keys for PowerShell logging and/or transcription NOT found."
+                    Return $true
+                }
+            }
+            SetScript = {
+                Get-Item -Path $Using:Paths |
+                    Remove-Item -Force -Confirm:$false -Verbose
+            }
+        }
+
+    }
+
+}
+
+cd c:\temp
+DisablePowerShellLogging
+Start-DscConfiguration -Path C:\temp\DisablePowerShellLogging -Wait -Verbose -Force
+"7"
+
+break
+"8"
+
+dir 'HKLM:\Software\Policies\Microsoft\Windows\PowerShell' -Recurse
+
+###############################################################################
+"9"
+break
+
+# Note that the PowerShell policy is cached when the ISE or Console is opened.
+# Run these commands in a fresh session to see the effect.
+"Catch me if you can"
+
+# Commands run, notice the scriptblock ID
+Get-WinEvent -FilterHashtable @{ ProviderName="Microsoft-Windows-PowerShell"; Id = 4104 } -MaxEvents 5 | ft Message -Wrap
+Get-WinEvent -FilterHashtable @{ ProviderName="Microsoft-Windows-PowerShell"; Id = 4104 } -MaxEvents 5 | ? Message -like "*catch*" | ft Message -Wrap
+
+# Commands started, notice the scriptblock ID
+Get-WinEvent -FilterHashtable @{ ProviderName="Microsoft-Windows-PowerShell"; Id = 4105 } -MaxEvents 5 | ft TimeCreated,Message -Wrap
+
+# Commands stopped, notice the scriptblock ID
+Get-WinEvent -FilterHashtable @{ ProviderName="Microsoft-Windows-PowerShell"; Id = 4106 } -MaxEvents 5 | ft TimeCreated,Message -Wrap
+
+# View the transcript output
+# NOTE: Access denied if on a local path instead of UNC path
+Get-ChildItem 'C:\PSTranscripts' -Recurse
+
