@@ -9,6 +9,7 @@ $url3 = "https://raw.githubusercontent.com/cash00/PS-Scripts/master/ok-sysmon.xm
 $url4 = "https://raw.githubusercontent.com/cash00/PS-Scripts/master/zabbix_agentd.win.conf"
 $url5 = "https://www.zabbix.com/downloads/4.0.0/zabbix_agents-4.0.0-win-i386.zip"
 $url6 = "https://www.zabbix.com/downloads/4.0.0/zabbix_agents-4.0.0-win-amd64.zip"
+$url7 = "https://raw.githubusercontent.com/cash00/PS-Scripts/master/xRemoteDesktopSessionHost.zip"
 
 $output1 = "$DLRoot\SysinternalsSuite.zip"
 $output2 = "$DLRoot\SysinternalsSuite-Nano.zip"
@@ -16,6 +17,7 @@ $output3 = "$DLRoot\ok-sysmon.xml"
 $output4 = "$DLRoot\zabbix_agentd.win.conf"
 $output5 = "$DLRoot\zabbix_agents-4.0.0-win-i386.zip"
 $output6 = "$DLRoot\zabbix_agents-4.0.0-win-amd64.zip"
+$output7 = "$DLRoot\xRemoteDesktopSessionHost.zip"
 
 $start_time = Get-Date
 
@@ -68,6 +70,11 @@ If ((Test-Path $output6) -eq $false)
 (New-Object System.Net.WebClient).DownloadFileAsync($url6, $output6)
 }
 
+If ((Test-Path $output7) -eq $false)
+{
+(New-Object System.Net.WebClient).DownloadFileAsync($url7, $output7)
+}
+
 Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)"
 
 #Get-BitsTransfer -AllUsers | Where-Object { $_.JobState -like "TransientError" } | Remove-BitsTransfer
@@ -100,4 +107,9 @@ If ((Test-Path $output5) -eq $true)
 If ((Test-Path $output6) -eq $true)
 {
     Write-Output "OK "$output6" !!!"
+}
+
+If ((Test-Path $output7) -eq $true)
+{
+    Write-Output "OK "$output7" !!!"
 }
