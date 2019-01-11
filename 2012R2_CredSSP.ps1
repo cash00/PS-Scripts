@@ -13,6 +13,10 @@ If (Get-HotFix|where {($_.HotFixID -match "KB4103715") -or ($_.HotFixID -match "
     Invoke-Command –Computername "localhost" –ScriptBlock {Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" –Value 0 -Force}
 
     Invoke-Command –Computername "localhost" –ScriptBlock {Enable-NetFirewallRule -DisplayGroup "Remote Desktop"}
+
+    Invoke-Command –Computername "localhost" –ScriptBlock {Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False}
+
+    Invoke-Command –Computername "localhost" –ScriptBlock {netsh advfirewall set allprofiles state off}
 }
 else
 {
@@ -36,6 +40,10 @@ If ((Test-Path $output1) -eq $false)
 
     Invoke-Command –Computername "localhost" –ScriptBlock {Enable-NetFirewallRule -DisplayGroup "Remote Desktop"}
     
+    Invoke-Command –Computername "localhost" –ScriptBlock {Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False}
+
+    Invoke-Command –Computername "localhost" –ScriptBlock {netsh advfirewall set allprofiles state off}
+
     #Restart the VM to complete the installations/settings
     #shutdown /r /t 0 /f
 }
