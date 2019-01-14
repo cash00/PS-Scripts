@@ -65,9 +65,19 @@ If ((Test-Path $output5) -eq $false)
 (New-Object System.Net.WebClient).DownloadFileAsync($url5, $output5)
 }
 
-If ((Test-Path $output6) -eq $false)
+If (((Test-Path $output6) -eq $false) -or ((Get-ChildItem $output6).Length -lt 1))
 {
-(New-Object System.Net.WebClient).DownloadFileAsync($url6, $output6)
+    $ln = Invoke-WebRequest -Uri $url6 -DisableKeepAlive -TimeoutSec 10 -UserAgent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
+
+    if ($ln.StatusCode -eq 200)
+    {
+        While ($ln.RawContentLength -ne (Get-ChildItem $output6 -ErrorAction SilentlyContinue).Length)
+        {
+            Remove-Item $output6 -Force -ErrorAction SilentlyContinue
+            $wc = New-Object System.Net.WebClient
+            $wc.DownloadFile($url6, $output6)
+        }        
+    }
 }
 
 If ((Test-Path $output7) -eq $false)
@@ -104,7 +114,7 @@ If ((Test-Path $output5) -eq $true)
     Write-Output "OK "$output5" !!!"
 }
 
-If ((Test-Path $output6) -eq $true)
+If (((Test-Path $output6) -eq $true) -and ((Get-ChildItem $output6).Length -gt 1kb))
 {
     Write-Output "OK "$output6" !!!"
 }
