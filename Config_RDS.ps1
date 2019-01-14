@@ -124,7 +124,7 @@ Node $computername {
 
     xRDRemoteApp zCalculator {
     CollectionName = $RDData.CollectionName
-    Alias = 'zCalculator'
+    Alias = 'win32calc'
     DisplayName = 'zCalculator'
     FilePath = '%SYSTEMDRIVE%\Windows\system32\win32calc.exe'
     DependsOn = '[xRDLicenseConfiguration]licenseconfig'
@@ -132,15 +132,15 @@ Node $computername {
 
     xRDRemoteApp zRemoteDesktopConnection {
     CollectionName = $RDData.CollectionName
-    Alias = 'zRemoteDesktopConnection'
-    DisplayName = 'zRemoteDesktopConnection'
+    Alias = 'mstsc'
+    DisplayName = 'zRemote Desktop Connection'
     FilePath = '%SYSTEMDRIVE%\Windows\system32\mstsc.exe'
     DependsOn = '[xRDLicenseConfiguration]licenseconfig'
     }
 
     xRDRemoteApp zNotepad {
     CollectionName = $RDData.CollectionName
-    Alias = 'zNotepad'
+    Alias = 'notepad'
     DisplayName = 'zNotepad'
     FilePath = '%SYSTEMDRIVE%\Windows\notepad.exe'
     DependsOn = '[xRDLicenseConfiguration]licenseconfig'
@@ -148,7 +148,7 @@ Node $computername {
 
     xRDRemoteApp zWordPad {
     CollectionName = $RDData.CollectionName
-    Alias = 'zWordPad'
+    Alias = 'wordpad'
     DisplayName = 'zWordPad'
     FilePath = '%SYSTEMDRIVE%\Program Files\Windows NT\Accessories\wordpad.exe'
     DependsOn = '[xRDLicenseConfiguration]licenseconfig'
