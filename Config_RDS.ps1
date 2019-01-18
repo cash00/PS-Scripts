@@ -14,9 +14,9 @@ RDSData = @{
     DisconnectedSessionLimitMin = 30
     ActiveSessionLimitMin = 0
     IdleSessionLimitMin = 60
-    AutomaticReconnectionEnabled = $false
-    BrokenConnectionAction = 'End' #'Disconnect'
-    ClientDeviceRedirectionOptions = '' #'ClientDeviceRedirectionOptions : AudioVideoPlayBack, AudioRecording, PlugAndPlayDevice, SmartCard, Clipboard, Drive'
+    AutomaticReconnectionEnabled = $true
+    BrokenConnectionAction = 'Disconnect' # default -> 'Disconnect'. "None, Disconnect, LogOff"
+    ClientDeviceRedirectionOptions = 'Clipboard' #'ClientDeviceRedirectionOptions : None, AudioVideoPlayBack, AudioRecording, COMPort, PlugAndPlayDevice, SmartCard, Clipboard, LPTPort, Drive, TimeZone'
     ClientPrinterAsDefault = $false
     ClientPrinterRedirected = $false
     RDEasyPrintDriverEnabled = $false
@@ -27,7 +27,7 @@ RDSData = @{
     EncryptionLevel = 'High' #'ClientCompatible'
     SecurityLayer = 'Negotiate'
     LicenseMode = 'PerUser'
-    UserGroup = 'RDS Test'
+    UserGroup = 'VEGAS\RDS Test'
 }
  
 }
@@ -40,12 +40,8 @@ Configuration RDS {
  
 param (
 )
-#region DSC Resource Modules
-#OBS!!! Be sure that the modules exist on the destination host servers
 
 Import-DscResource -ModuleName PSDesiredStateConfiguration, @{ModuleName='xRemoteDesktopSessionHost';ModuleVersion="1.8.0.0"}
-
-#endregion
 
 Node $computername {
     $RDData = $data.RDSData
@@ -125,35 +121,59 @@ Node $computername {
     xRDRemoteApp zCalculator {
     CollectionName = $RDData.CollectionName
     Alias = 'win32calc'
-    DisplayName = 'zCalculator'
-    FilePath = '%SYSTEMDRIVE%\Windows\system32\win32calc.exe'
+    DisplayName = 'Calculator'
+    FilePath = 'C:\Windows\system32\win32calc.exe'
     DependsOn = '[xRDLicenseConfiguration]licenseconfig'
     }
 
     xRDRemoteApp zRemoteDesktopConnection {
     CollectionName = $RDData.CollectionName
     Alias = 'mstsc'
-    DisplayName = 'zRemote Desktop Connection'
-    FilePath = '%SYSTEMDRIVE%\Windows\system32\mstsc.exe'
+    DisplayName = 'Remote Desktop Connection'
+    FilePath = 'C:\Windows\system32\mstsc.exe'
     DependsOn = '[xRDLicenseConfiguration]licenseconfig'
     }
-
+    <#
     xRDRemoteApp zNotepad {
     CollectionName = $RDData.CollectionName
     Alias = 'notepad'
-    DisplayName = 'zNotepad'
-    FilePath = '%SYSTEMDRIVE%\Windows\notepad.exe'
+    DisplayName = 'Notepad'
+    FilePath = 'C:\Windows\notepad.exe'
     DependsOn = '[xRDLicenseConfiguration]licenseconfig'
-    }
+    }#>
 
     xRDRemoteApp zWordPad {
     CollectionName = $RDData.CollectionName
     Alias = 'wordpad'
-    DisplayName = 'zWordPad'
-    FilePath = '%SYSTEMDRIVE%\Program Files\Windows NT\Accessories\wordpad.exe'
+    DisplayName = 'WordPad'
+    FilePath = 'C:\Program Files\Windows NT\Accessories\wordpad.exe'
     DependsOn = '[xRDLicenseConfiguration]licenseconfig'
     }
 
+    WindowsFeature RDSGatewayTools {
+    Name = 'RSAT-RDS-Gateway'
+    Ensure = 'Present'
+    DependsOn = '[WindowsFeature]RDSConnectionBroker'
+    }
+
+    WindowsFeature RDSLicDiagTools {
+    Name = 'RSAT-RDS-Licensing-Diagnosis-UI'
+    Ensure = 'Present'
+    DependsOn = '[WindowsFeature]RDLicensing'
+    }
+
+    WindowsFeature RDSLicTools {
+    Name = 'RDS-Licensing-UI '
+    Ensure = 'Present'
+    DependsOn = '[WindowsFeature]RDLicensing'
+    }
+
+    WindowsFeature RDSTools {
+    Name = 'RSAT-RDS-Tools'
+    Ensure = 'Present'
+    IncludeAllSubFeature = $true
+    DependsOn = '[WindowsFeature]WebAccess'
+    }
 }
 
 }

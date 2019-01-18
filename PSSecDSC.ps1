@@ -12,7 +12,7 @@ Param(
 
 ) #G:\WindowsEventLogs\PSTranscripts
 
-    Import-DscResource -ModuleName PSDesiredStateConfiguration
+    Import-DscResource -ModuleName PSDesiredStateConfiguration #–ModuleName @{ModuleName="UserConfigProvider";ModuleVersion="3.0"}
 
     Node localhost
     {
@@ -337,6 +337,14 @@ Param(
             Ensure          = 'Present'
             DependsOn = '[Script]CheckGDrive'
         }#>
+
+        Environment WindowsEventLogLocation #ResourceName
+        {
+            Name = 'WindowsEventLogs'
+            Ensure = 'Present'
+            Path = $true
+            Value = 'G:\WindowsEventLogs'
+        }
 
         ### Remove this resource if sending Transcripts to a remote share.
         File TranscriptsOutputDirectory
