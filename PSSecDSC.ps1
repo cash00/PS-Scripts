@@ -718,7 +718,7 @@ Param(
         }
 
         ### Enable Strong Authentication on .Net Framework version 3 and below##############################################
-        Registry 64bitDNFW3
+        Registry Enable64bitDNFW3
         {
             Key       = 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\.NETFramework\v2.0.50727'
             ValueName = 'SchUseStrongCrypto'
@@ -727,7 +727,7 @@ Param(
             Ensure    = 'Present'
         }
 
-        Registry 32bitDNFW3
+        Registry Enable32bitDNFW3
         {
             Key       = 'HKLM:\SOFTWARE\Microsoft\.NETFramework\v2.0.50727'
             ValueName = 'SchUseStrongCrypto'
@@ -737,7 +737,7 @@ Param(
         }
 
         ### Enable Strong Authentication on .Net Framework version 4 and above##############################################
-        Registry 64bitDNFW4
+        Registry Enable64bitDNFW4
         {
             Key       = 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\.NETFramework\v4.0.30319'
             ValueName = 'SchUseStrongCrypto'
@@ -746,7 +746,7 @@ Param(
             Ensure    = 'Present'
         }
 
-        Registry 32bitDNFW4
+        Registry Enable32bitDNFW4
         {
             Key       = 'HKLM:\SOFTWARE\Microsoft\.NETFramework\v4.0.30319'
             ValueName = 'SchUseStrongCrypto'
