@@ -259,6 +259,31 @@ Param(
             }
         }
 
+        Script SecurityLogSize
+        {
+            GetScript = {
+                Return @{
+                    Result = Get-WinEvent -ListLog Security | Out-String
+                }
+            }
+
+            TestScript = {
+                $Log = Get-WinEvent -ListLog Security
+                If ($Log.MaximumSizeInBytes -lt ($using:EventLogSizeInMB * 1MB)) {
+                    Write-Verbose 'Event log [Security] is NOT in desired state.'
+                    Return $false
+                } Else {   
+                    Write-Verbose 'Event log [Security] is in desired state.'
+                    Return $true
+                }
+            }
+
+            SetScript = {
+                Write-Verbose 'Applying settings to event log [Security].'
+                wevtutil set-log Security /maxsize:$($using:EventLogSizeInMB * 1MB)
+            }
+        }
+
         Script SysmonLogSize
         {
             GetScript = {
@@ -286,7 +311,6 @@ Param(
         }
 
         ### Transcription #####################################################
-
         ### Check For G: drive #####################################################
         Script CheckGDrive
         {
@@ -462,6 +486,16 @@ Param(
             ValueName = '_PSLockdownPolicy'
             ValueData = '4'
             ValueType = 'String'
+            Ensure    = 'Present'
+        }
+
+        ### CommandLine Logging ##############################################
+        Registry CommandLineLogging
+        {
+            Key       = 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System\Audit'
+            ValueName = 'ProcessCreationIncludeCmdLine_Enabled'
+            ValueData = '1'
+            ValueType = 'DWord'
             Ensure    = 'Present'
         }
 

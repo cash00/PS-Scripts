@@ -114,11 +114,15 @@ try{
         #List Hotfix
         Get-HotFix|where {($_.HotFixID -match "KB4103723") -or ($_.HotFixID -match "KB4103731") -or ($_.HotFixID -match "KB4103727")}
 
+        #Add the vulnerability key to allow unpatched clients
+        REG ADD "HKLM\Software\Microsoft\Windows\CurrentVersion\Policies\System\CredSSP\Parameters" /v AllowEncryptionOracle /t REG_DWORD /d 2 /f
+
         #Disable windows firewall
         Invoke-Command –Computername "localhost" –ScriptBlock {Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server" -Name "fDenyTSConnections" –Value 0 -Force}
         Invoke-Command –Computername "localhost" –ScriptBlock {Enable-NetFirewallRule -DisplayGroup "Remote Desktop"}
         Invoke-Command –Computername "localhost" –ScriptBlock {Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False}
         Invoke-Command –Computername "localhost" –ScriptBlock {netsh advfirewall set allprofiles state off}
+        Invoke-Command –Computername "localhost" –ScriptBlock {Auditpol /set /subcategory:"Registry" /success:enable /failure:disable}
     }
     else
     {
@@ -144,6 +148,7 @@ try{
         Invoke-Command –Computername "localhost" –ScriptBlock {Enable-NetFirewallRule -DisplayGroup "Remote Desktop"}
         Invoke-Command –Computername "localhost" –ScriptBlock {Set-NetFirewallProfile -Profile Domain,Public,Private -Enabled False}
         Invoke-Command –Computername "localhost" –ScriptBlock {netsh advfirewall set allprofiles state off}
+        Invoke-Command –Computername "localhost" –ScriptBlock {Auditpol /set /subcategory:"Registry" /success:enable /failure:disable}
 
         #Restart the VM to complete the installations/settings
         #shutdown /r /t 0 /f
