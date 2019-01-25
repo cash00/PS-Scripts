@@ -499,6 +499,262 @@ Param(
             Ensure    = 'Present'
         }
 
+        ### Disable SSL 2.0  Server##############################################
+        Registry DisableSSL20Server1
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0\Server'
+            ValueName = 'Enabled'
+            ValueData = '0'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        Registry DisableSSL20Server2
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0\Server'
+            ValueName = 'DisabledByDefault'
+            ValueData = '1'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        ### Disable SSL 2.0  Client##############################################
+        Registry DisableSSL20Client1
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0\Client'
+            ValueName = 'Enabled'
+            ValueData = '0'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        Registry DisableSSL20Client2
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 2.0\Client'
+            ValueName = 'DisabledByDefault'
+            ValueData = '1'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        ### Disable SSL 3.0  Server##############################################
+        Registry DisableSSL30Server1
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Server'
+            ValueName = 'Enabled'
+            ValueData = '0'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        Registry DisableSSL30Server2
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Server'
+            ValueName = 'DisabledByDefault'
+            ValueData = '1'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        ### Disable SSL 3.0  Client##############################################
+        Registry DisableSSL30Client1
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Client'
+            ValueName = 'Enabled'
+            ValueData = '0'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        Registry DisableSSL30Client2
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\SSL 3.0\Client'
+            ValueName = 'DisabledByDefault'
+            ValueData = '1'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        ### Disable TLS 1.0  Server##############################################
+        Registry DisableTLS10Server1
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0\Server'
+            ValueName = 'Enabled'
+            ValueData = '0'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        Registry DisableTLS10Server2
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0\Server'
+            ValueName = 'DisabledByDefault'
+            ValueData = '1'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        ### Disable TLS 1.0  Client##############################################
+        Registry DisableTLS10Client1
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0\Client'
+            ValueName = 'Enabled'
+            ValueData = '0'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        Registry DisableTLS10Client2
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0\Client'
+            ValueName = 'DisabledByDefault'
+            ValueData = '1'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        ### Disable TLS 1.1  Server##############################################
+        Registry DisableTLS11Server1
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1\Server'
+            ValueName = 'Enabled'
+            ValueData = '0'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        Registry DisableTLS11Server2
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1\Server'
+            ValueName = 'DisabledByDefault'
+            ValueData = '1'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        ### Disable TLS 1.1  Client##############################################
+        Registry DisableTLS11Client1
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1\Client'
+            ValueName = 'Enabled'
+            ValueData = '0'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        Registry DisableTLS11Client2
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1\Client'
+            ValueName = 'DisabledByDefault'
+            ValueData = '1'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        ### Disable TLS 1.2  Server##############################################
+        Registry DisableTLS12Server1
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Server'
+            ValueName = 'Enabled'
+            ValueData = '1'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        Registry DisableTLS12Server2
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Server'
+            ValueName = 'DisabledByDefault'
+            ValueData = '0'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        ### Disable TLS 1.2  Client##############################################
+        Registry DisableTLS12Client1
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Client'
+            ValueName = 'Enabled'
+            ValueData = '1'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        Registry DisableTLS12Client2
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.2\Client'
+            ValueName = 'DisabledByDefault'
+            ValueData = '0'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        ### Disable RC4##############################################
+        Registry DisableRC4128
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 128/128'
+            ValueName = 'Enabled'
+            ValueData = '0'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        Registry DisableRC440
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 40/128'
+            ValueName = 'Enabled'
+            ValueData = '0'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        Registry DisableRC456
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 56/128'
+            ValueName = 'Enabled'
+            ValueData = '0'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        ### Enable Strong Authentication on .Net Framework version 3 and below##############################################
+        Registry 64bitDNFW3
+        {
+            Key       = 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\.NETFramework\v2.0.50727'
+            ValueName = 'SchUseStrongCrypto'
+            ValueData = '1'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        Registry 32bitDNFW3
+        {
+            Key       = 'HKLM:\SOFTWARE\Microsoft\.NETFramework\v2.0.50727'
+            ValueName = 'SchUseStrongCrypto'
+            ValueData = '1'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        ### Enable Strong Authentication on .Net Framework version 4 and above##############################################
+        Registry 64bitDNFW4
+        {
+            Key       = 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\.NETFramework\v4.0.30319'
+            ValueName = 'SchUseStrongCrypto'
+            ValueData = '1'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        Registry 32bitDNFW4
+        {
+            Key       = 'HKLM:\SOFTWARE\Microsoft\.NETFramework\v4.0.30319'
+            ValueName = 'SchUseStrongCrypto'
+            ValueData = '1'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
     }#End of Node localhost
 
 }
