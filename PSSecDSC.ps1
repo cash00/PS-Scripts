@@ -909,7 +909,7 @@ TLS_RSA_WITH_AES_128_CBC_SHA'
             Ensure    = 'Present'
         }
         #>
-        
+        <#
         ### Enable Strong Authentication on .Net Framework version 3 and below##############################################
         Registry Enable64bitDNFW3
         {
@@ -946,7 +946,7 @@ TLS_RSA_WITH_AES_128_CBC_SHA'
             ValueData = '1'
             ValueType = 'DWord'
             Ensure    = 'Present'
-        }
+        }#>
         <#
         ### Enable HTTP2##############################################
         Registry EnableHTTP21
@@ -966,7 +966,7 @@ TLS_RSA_WITH_AES_128_CBC_SHA'
             ValueType = 'DWord'
             Ensure    = 'Present'
         }#>
-        
+        <#
         ### Disable HTTP Server Header##############################################
         Registry DisableHTTPServerHeader
         {
@@ -975,7 +975,7 @@ TLS_RSA_WITH_AES_128_CBC_SHA'
             ValueData = '1'
             ValueType = 'DWord'
             Ensure    = 'Present'
-        }
+        }#>
         <#
         ### Enable Secure Protocols##############################################
         Registry EnableSecureProtocols32
