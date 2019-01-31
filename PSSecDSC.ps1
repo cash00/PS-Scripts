@@ -860,7 +860,7 @@ Param(
             ValueType = 'DWord'
             Ensure    = 'Present'
         }#>
-
+        <#
         ### Disable MD5 Hash##############################################
         Registry DisableMD5Hash
         {
@@ -879,7 +879,7 @@ Param(
             ValueData = '00000800'
             ValueType = 'DWord'
             Ensure    = 'Present'
-        }
+        }#>
 
         ### Cipher Suites Order##############################################
         <#
