@@ -224,4 +224,7 @@ $computername = $env:computername
 CopyxModule -OutputPath 'C:\Temp\CopyxModule\' -computername $computername -verbose
 Start-DscConfiguration -Path C:\Temp\CopyxModule\ -Wait -Verbose -Force
 
+Get-DscResource -Module IISAdministration|ft -AutoSize
+Get-DscResource -Module RDWebClientManagement|ft -AutoSize
+Get-DscResource -Module xPSDesiredStateConfiguration|ft -AutoSize
 Get-DscResource -Module xRemoteDesktopSessionHost|ft -AutoSize

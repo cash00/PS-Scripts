@@ -87,24 +87,64 @@ If (((Test-Path $output6) -eq $false) -or ((Get-ChildItem $output6).Length -lt 1
     }
 }
 
-If ((Test-Path $output7) -eq $false)
+If (((Test-Path $output7) -eq $false) -or ((Get-ChildItem $output7).Length -lt 1))
 {
-(New-Object System.Net.WebClient).DownloadFileAsync($url7, $output7)
+    $ln = Invoke-WebRequest -Uri $url7 -DisableKeepAlive -TimeoutSec 10 -UserAgent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
+
+    if ($ln.StatusCode -eq 200)
+    {
+        While ($ln.RawContentLength -ne (Get-ChildItem $output7 -ErrorAction SilentlyContinue).Length)
+        {
+            Remove-Item $output7 -Force -ErrorAction SilentlyContinue
+            $wc = New-Object System.Net.WebClient
+            $wc.DownloadFile($url7, $output7)
+        }        
+    }
 }
 
-If ((Test-Path $output8) -eq $false)
+If (((Test-Path $output8) -eq $false) -or ((Get-ChildItem $output8).Length -lt 1))
 {
-(New-Object System.Net.WebClient).DownloadFileAsync($url8, $output8)
+    $ln = Invoke-WebRequest -Uri $url8 -DisableKeepAlive -TimeoutSec 10 -UserAgent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
+
+    if ($ln.StatusCode -eq 200)
+    {
+        While ($ln.RawContentLength -ne (Get-ChildItem $output8 -ErrorAction SilentlyContinue).Length)
+        {
+            Remove-Item $output8 -Force -ErrorAction SilentlyContinue
+            $wc = New-Object System.Net.WebClient
+            $wc.DownloadFile($url8, $output8)
+        }        
+    }
 }
 
-If ((Test-Path $output9) -eq $false)
+If (((Test-Path $output9) -eq $false) -or ((Get-ChildItem $output9).Length -lt 1))
 {
-(New-Object System.Net.WebClient).DownloadFileAsync($url9, $output9)
+    $ln = Invoke-WebRequest -Uri $url9 -DisableKeepAlive -TimeoutSec 10 -UserAgent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
+
+    if ($ln.StatusCode -eq 200)
+    {
+        While ($ln.RawContentLength -ne (Get-ChildItem $output9 -ErrorAction SilentlyContinue).Length)
+        {
+            Remove-Item $output9 -Force -ErrorAction SilentlyContinue
+            $wc = New-Object System.Net.WebClient
+            $wc.DownloadFile($url9, $output9)
+        }        
+    }
 }
 
-If ((Test-Path $output10) -eq $false)
+If (((Test-Path $output10) -eq $false) -or ((Get-ChildItem $output10).Length -lt 1))
 {
-(New-Object System.Net.WebClient).DownloadFileAsync($url10, $output10)
+    $ln = Invoke-WebRequest -Uri $url10 -DisableKeepAlive -TimeoutSec 10 -UserAgent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
+
+    if ($ln.StatusCode -eq 200)
+    {
+        While ($ln.RawContentLength -ne (Get-ChildItem $output10 -ErrorAction SilentlyContinue).Length)
+        {
+            Remove-Item $output10 -Force -ErrorAction SilentlyContinue
+            $wc = New-Object System.Net.WebClient
+            $wc.DownloadFile($url10, $output10)
+        }        
+    }
 }
 
 Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)"
@@ -148,15 +188,15 @@ If ((Test-Path $output7) -eq $true)
 
 If ((Test-Path $output8) -eq $true)
 {
-    Write-Output "OK "$output7" !!!"
+    Write-Output "OK "$output8" !!!"
 }
 
 If ((Test-Path $output9) -eq $true)
 {
-    Write-Output "OK "$output7" !!!"
+    Write-Output "OK "$output9" !!!"
 }
 
 If ((Test-Path $output10) -eq $true)
 {
-    Write-Output "OK "$output7" !!!"
+    Write-Output "OK "$output10" !!!"
 }
