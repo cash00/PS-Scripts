@@ -727,7 +727,7 @@ Param(
             ValueType = 'DWord'
             Ensure    = 'Present'
         }
-
+        <#
         ### Disable RC4##############################################
         Registry DisableRC4128
         {
@@ -839,7 +839,7 @@ Param(
             ValueData = '0'
             ValueType = 'DWord'
             Ensure    = 'Present'
-        }
+        }#>
         <#
         ### Disable AES128##############################################
         Registry DisableAES128
