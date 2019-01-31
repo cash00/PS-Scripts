@@ -9,7 +9,11 @@ $url3 = "https://raw.githubusercontent.com/cash00/PS-Scripts/master/ok-sysmon.xm
 $url4 = "https://raw.githubusercontent.com/cash00/PS-Scripts/master/zabbix_agentd.win.conf"
 $url5 = "https://www.zabbix.com/downloads/4.0.0/zabbix_agents-4.0.0-win-i386.zip"
 $url6 = "https://www.zabbix.com/downloads/4.0.0/zabbix_agents-4.0.0-win-amd64.zip"
-$url7 = "https://raw.githubusercontent.com/cash00/PS-Scripts/master/xRemoteDesktopSessionHost.zip"
+$url7 = "https://raw.githubusercontent.com/cash00/PS-Scripts/master/IISAdministration.zip"
+$url8 = "https://raw.githubusercontent.com/cash00/PS-Scripts/master/RDWebClientManagement.zip"
+$url9 = "https://raw.githubusercontent.com/cash00/PS-Scripts/master/xPSDesiredStateConfiguration.zip"
+$url10 = "https://raw.githubusercontent.com/cash00/PS-Scripts/master/xRemoteDesktopSessionHost.zip"
+
 
 $output1 = "$DLRoot\SysinternalsSuite.zip"
 $output2 = "$DLRoot\SysinternalsSuite-Nano.zip"
@@ -17,7 +21,10 @@ $output3 = "$DLRoot\ok-sysmon.xml"
 $output4 = "$DLRoot\zabbix_agentd.win.conf"
 $output5 = "$DLRoot\zabbix_agents-4.0.0-win-i386.zip"
 $output6 = "$DLRoot\zabbix_agents-4.0.0-win-amd64.zip"
-$output7 = "$DLRoot\xRemoteDesktopSessionHost.zip"
+$output7 = "$DLRoot\IISAdministration.zip"
+$output8 = "$DLRoot\RDWebClientManagement.zip"
+$output9 = "$DLRoot\xPSDesiredStateConfiguration.zip"
+$output10 = "$DLRoot\xRemoteDesktopSessionHost.zip"
 
 $start_time = Get-Date
 
@@ -85,6 +92,21 @@ If ((Test-Path $output7) -eq $false)
 (New-Object System.Net.WebClient).DownloadFileAsync($url7, $output7)
 }
 
+If ((Test-Path $output8) -eq $false)
+{
+(New-Object System.Net.WebClient).DownloadFileAsync($url8, $output8)
+}
+
+If ((Test-Path $output9) -eq $false)
+{
+(New-Object System.Net.WebClient).DownloadFileAsync($url9, $output9)
+}
+
+If ((Test-Path $output10) -eq $false)
+{
+(New-Object System.Net.WebClient).DownloadFileAsync($url10, $output10)
+}
+
 Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)"
 
 #Get-BitsTransfer -AllUsers | Where-Object { $_.JobState -like "TransientError" } | Remove-BitsTransfer
@@ -120,6 +142,21 @@ If (((Test-Path $output6) -eq $true) -and ((Get-ChildItem $output6).Length -gt 1
 }
 
 If ((Test-Path $output7) -eq $true)
+{
+    Write-Output "OK "$output7" !!!"
+}
+
+If ((Test-Path $output8) -eq $true)
+{
+    Write-Output "OK "$output7" !!!"
+}
+
+If ((Test-Path $output9) -eq $true)
+{
+    Write-Output "OK "$output7" !!!"
+}
+
+If ((Test-Path $output10) -eq $true)
 {
     Write-Output "OK "$output7" !!!"
 }

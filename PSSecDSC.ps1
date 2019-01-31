@@ -341,6 +341,7 @@ Param(
                 If (!(test-path $using:CheckDrive))
                 {
                     Write-Verbose ' is NOT in desired state.'
+                    New-Item -Path $using:WindowsEventLogsPath -ItemType directory
                     Return $false
                 }
                 Else
@@ -494,6 +495,44 @@ Param(
         {
             Key       = 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System\Audit'
             ValueName = 'ProcessCreationIncludeCmdLine_Enabled'
+            ValueData = '1'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+        ### Enable Logging End##########################################################################################################
+        ### Disable PCT 1.0  Server##############################################
+        Registry DisablePCT10Server1
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\PCT 1.0\Server'
+            ValueName = 'Enabled'
+            ValueData = '0'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        Registry DisablePCT10Server2
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\PCT 1.0\Server'
+            ValueName = 'DisabledByDefault'
+            ValueData = '1'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        ### Disable PCT 1.0  Client##############################################
+        Registry DisablePCT10Client1
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\PCT 1.0\Client'
+            ValueName = 'Enabled'
+            ValueData = '0'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        Registry DisablePCT10Client2
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\PCT 1.0\Client'
+            ValueName = 'DisabledByDefault'
             ValueData = '1'
             ValueType = 'DWord'
             Ensure    = 'Present'
@@ -717,6 +756,160 @@ Param(
             Ensure    = 'Present'
         }
 
+        Registry DisableRC464
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 64/128'
+            ValueName = 'Enabled'
+            ValueData = '0'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        ### Disable RC2##############################################
+        Registry DisableRC2128
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC2 128/128'
+            ValueName = 'Enabled'
+            ValueData = '0'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        Registry DisableRC240
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC2 40/128'
+            ValueName = 'Enabled'
+            ValueData = '0'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        Registry DisableRC256
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC2 56/128'
+            ValueName = 'Enabled'
+            ValueData = '0'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        ### Disable NULL##############################################
+        Registry DisableNULL
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\NULL'
+            ValueName = 'Enabled'
+            ValueData = '0'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        ### Disable 3DES##############################################
+        Registry Disable3DES112
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\Triple DES 112'
+            ValueName = 'Enabled'
+            ValueData = '0'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        Registry Disable3DES168
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\Triple DES 168'
+            ValueName = 'Enabled'
+            ValueData = '0'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        ### Disable DES##############################################
+        Registry DisableDES56
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\DES 56/56'
+            ValueName = 'Enabled'
+            ValueData = '0'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        Registry DisableDES168
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\DES 168/168'
+            ValueName = 'Enabled'
+            ValueData = '0'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+        <#
+        ### Disable AES128##############################################
+        Registry DisableAES128
+        {
+            Key       = 'HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 128/128'
+            ValueName = 'Enabled'
+            ValueData = '0'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        ### Enable AES256##############################################
+        Registry EnableAES256
+        {
+            Key       = 'HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 256/256'
+            ValueName = 'Enabled'
+            ValueData = '1'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }#>
+
+        ### Disable MD5 Hash##############################################
+        Registry DisableMD5Hash
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Hashes\MD5'
+            ValueName = 'Enabled'
+            ValueData = '0'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        ### Disable Diffie Hellman##############################################
+        Registry DisableDiffieHellman
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\KeyExchangeAlgorithms\Diffie-Hellman'
+            ValueName = 'ServerMinKeyBitLength'
+            ValueData = '00000800'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        ### Cipher Suites Order##############################################
+        <#
+        Registry CipherSuitesOrder
+        {
+            Key       = 'HKLM:\System\CurrentControlSet\Control\Cryptography\Configuration\Local\SSL\00010002'
+            ValueName = 'Functions'
+            ValueData = 'TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384
+TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256
+TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384
+TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256
+TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384
+TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256
+TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA
+TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA
+TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA
+TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA
+TLS_RSA_WITH_AES_256_GCM_SHA384
+TLS_RSA_WITH_AES_128_GCM_SHA256
+TLS_RSA_WITH_AES_256_CBC_SHA256
+TLS_RSA_WITH_AES_128_CBC_SHA256
+TLS_RSA_WITH_AES_256_CBC_SHA
+TLS_RSA_WITH_AES_128_CBC_SHA'
+            ValueType = 'MultiString'
+            Ensure    = 'Present'
+        }
+        #>
+        
         ### Enable Strong Authentication on .Net Framework version 3 and below##############################################
         Registry Enable64bitDNFW3
         {
@@ -754,6 +947,82 @@ Param(
             ValueType = 'DWord'
             Ensure    = 'Present'
         }
+        <#
+        ### Enable HTTP2##############################################
+        Registry EnableHTTP21
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Services\HTTP\Parameters'
+            ValueName = 'EnableHttp2Tls'
+            ValueData = '1'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        Registry EnableHTTP22
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Services\HTTP\Parameters'
+            ValueName = 'EnableHttp2Cleartext'
+            ValueData = '1'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }#>
+        
+        ### Disable HTTP Server Header##############################################
+        Registry DisableHTTPServerHeader
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Services\HTTP\Parameters'
+            ValueName = 'DisableServerHeader'
+            ValueData = '1'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+        <#
+        ### Enable Secure Protocols##############################################
+        Registry EnableSecureProtocols32
+        {
+            Key       = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp'
+            ValueName = 'DefaultSecureProtocols'
+            ValueData = '00000800'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        Registry EnableSecureProtocols64
+        {
+            Key       = 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp'
+            ValueName = 'DefaultSecureProtocols'
+            ValueData = '00000800'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        Registry EnableMachineIESecureProtocols
+        {
+            Key       = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings'
+            ValueName = 'SecureProtocols'
+            ValueData = '00000800'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        Registry EnableUserIESecureProtocols
+        {
+            Key       = 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings'
+            ValueName = 'SecureProtocols'
+            ValueData = '00000800'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }#>
+
+        ### Disable CRL Check##############################################
+        Registry DisableCRLCheck
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Services\HTTP\Parameters\SslBindingInfo'
+            ValueName = 'DefaultSslCertCheckMode'
+            ValueData = '1'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
 
     }#End of Node localhost
 
@@ -761,8 +1030,23 @@ Param(
 
 cd c:\temp
 EnablePowerShellLogging -OutputPath 'C:\Temp\EnablePowerShellLogging' -Verbose
-([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 128/128') 
-([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 40/128') 
-([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 56/128') 
+([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 128/128')
+([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 40/128')
+([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 56/128')
+([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 64/128')
+
+([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC2 128/128')
+([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC2 40/128')
+([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC2 56/128')
+
+([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\Triple DES 112')
+([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\Triple DES 168')
+
+([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\DES 168/168')
+([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\DES 56/56')
+
+([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 128/128')
+([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 256/256')
 
 #Start-DscConfiguration -Path C:\temp\EnablePowerShellLogging -Wait -Verbose -Force
+
