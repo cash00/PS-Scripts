@@ -500,6 +500,7 @@ Param(
             Ensure    = 'Present'
         }
         ### Enable Logging End##########################################################################################################
+        <#
         ### Disable PCT 1.0  Server##############################################
         Registry DisablePCT10Server1
         {
@@ -726,7 +727,7 @@ Param(
             ValueData = '0'
             ValueType = 'DWord'
             Ensure    = 'Present'
-        }
+        }#>
         <#
         ### Disable RC4##############################################
         Registry DisableRC4128
