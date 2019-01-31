@@ -1,18 +1,110 @@
-﻿#Install-PackageProvider -Name NuGet -Force
-#Get-PackageProvider -Name NuGet -Force
-#Install-Module -Name xRemoteDesktopSessionHost -Force
-#Get-DscResource -Module xRemoteDesktopSessionHost
+﻿cls
+Stop-Transcript
+
+<#
+Get-ExecutionPolicy -List
+Set-ExecutionPolicy -ExecutionPolicy Bypass -Force
+Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process -Force
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope Process -Force
+Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope CurrentUser -Force
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope CurrentUser -Force
+Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope LocalMachine -Force
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope LocalMachine -Force
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Force
+Get-ExecutionPolicy -List
+#>
+
+If ( [IntPtr]::Size * 8 -ne 64 )
+{
+    C:\Windows\SysNative\WindowsPowerShell\v1.0\PowerShell.exe -File $MyInvocation.MyCommand.Path
+}
+Else
+{
+$hostname = $env:computername
+#$FQDNhostname = [System.Net.Dns]::GetHostByName(($env:computerName)).Hostname
+
+#$udd = $env:userdnsdomain
+$compdomain = (gwmi win32_computersystem).Domain
+$compver = (Get-WmiObject Win32_OperatingSystem).Version
+$DNSSUF = Get-DnsClientGlobalSetting
+
+$datetime = Get-Date -Format 'yyyyMMdd_HHmmss'
+$gloc = Get-Location
+$path = '\\'+$hostname+'\C$\temp'
+$Script = $MyInvocation.MyCommand.Name.TrimEnd(".ps1")
+
+if($Script -eq "")
+{
+$Script = "Template" #<REPLACE WITH THE SCRIPT NAME>
+}
+
+if ($DNSSUF.UseSuffixSearchList -eq $True)
+{
+foreach ($dns in $DNSSUF.DNSSuffixesToAppend)
+{
+    if ($dns -eq $compdomain)
+    {
+    $path = '\\'+$compdomain+'\sysvol\'+$compdomain+'\scripts\'+$Script
+    break;
+    }
+    else
+    {
+    $path = '\\'+$hostname+'\C$\temp\'+$Script
+    }
+}
+}
+else
+{
+$path = '\\'+$hostname+'\C$\temp\'+$Script
+}
+#Uncomment below line to test script on local machine
+#$path = '\\'+$hostname+'\C$\temp\'+$Script
+
+$outlog = "$path\$hostname"+"_"+"$Script"+"_"+"$datetime.txt"
+$errlog = "C:\temp\$Script"+"Err_"+"$datetime.txt"
+#$outcsv = "$path\$Script"+"_"+"$datetime.csv"
+$outcsv = "$path\$Script.csv"
+
+Start-Transcript -Path $outlog -Verbose
+
+"======================================================================================================================================"
+"List env:PSModulePath"
+#dir $env:PSModulePath.Split(";")
+"======================================================================================================================================"
+"profile: "+$profile
+#dir $profile
+"======================================================================================================================================"
+
+"BEFORE"
+#Get-Module|ft -Property * -AutoSize
+
+#Import-Module -Name Dism -Force -Verbose
+
+#Import-Module -Name ServerManager -Force -Verbose
+"AFTER"
+#Get-Module|ft -Property * -AutoSize
+
+"======================================================================================================================================"
+'START'
+#'hostname:'+$hostname
+'DateTime:'+$datetime
+'Path:'+$path
+'Running path:'+$gloc.Path
+'Script:'+$Script
+#'Outlog:'+$outlog
+#'Errlog:'+$errlog
+"======================================================================================================================================"
 
 Configuration CopyxModule
 {
     param (
     [parameter(Mandatory=$true)]
-    [string[]]$computername
+    [string[]]$hostname
     )
 
     Import-DscResource -ModuleName PSDesiredStateConfiguration
 
-    Node $computername
+    Node $hostname
     {
         Script CheckIISAdministrationFolder
         {
@@ -195,36 +287,56 @@ Configuration CopyxModule
             Ensure = 'Present'
             DependsOn = '[File]xRDSHost'
         }
-
-########################################################################################################################
-
-
-########################################################################################################################
-
-
-########################################################################################################################
-
-
-########################################################################################################################
-
-
-########################################################################################################################
-
-
-
-
-
-
-
     }#End of Node localhost
 }
 
-$computername = $env:computername
+CopyxModule -OutputPath 'C:\Temp\CopyxModule\' -computername $hostname -verbose
 
-CopyxModule -OutputPath 'C:\Temp\CopyxModule\' -computername $computername -verbose
-Start-DscConfiguration -Path C:\Temp\CopyxModule\ -Wait -Verbose -Force
+function Do-Something
+{
+[cmdletbinding()]
+param()
 
-Get-DscResource -Module IISAdministration|ft -AutoSize
-Get-DscResource -Module RDWebClientManagement|ft -AutoSize
-Get-DscResource -Module xPSDesiredStateConfiguration|ft -AutoSize
-Get-DscResource -Module xRemoteDesktopSessionHost|ft -AutoSize
+#Export-Csv -NoTypeInformation -Path $outcsv
+
+if (!(test-path $path))
+{
+    New-Item -Path $path -ItemType directory
+}
+
+try{
+
+    Start-DscConfiguration -Path C:\Temp\CopyxModule\ -Wait -Verbose -Force
+
+    Get-DscResource -Module IISAdministration|ft -AutoSize
+    Get-DscResource -Module RDWebClientManagement|ft -AutoSize
+    Get-DscResource -Module xPSDesiredStateConfiguration|ft -AutoSize
+    Get-DscResource -Module xRemoteDesktopSessionHost|ft -AutoSize
+}
+catch
+{
+$PSItem.ToString() | Out-File -Append $errlog
+"" | Out-File -Append $errlog
+$PSItem.ScriptStackTrace | Out-File -Append $errlog
+"" | Out-File -Append $errlog
+$PSItem.InvocationInfo | Format-List * | Out-File -Append $errlog
+"" | Out-File -Append $errlog
+$PSCmdlet.ThrowTerminatingError($PSitem) | Out-File -Append $errlog
+}
+
+}
+
+Do-Something
+
+$edatetime = Get-Date -Format 'yyyyMMdd_HHmmss'
+"======================================================================================================================================"
+'END'
+#'hostname:'+$hostname
+'datetime:'+$edatetime
+#'path:'+$path
+#'Script:'+$Script
+#'outlog:'+$outlog
+"======================================================================================================================================"
+
+Stop-Transcript
+}
