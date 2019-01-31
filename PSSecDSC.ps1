@@ -1,5 +1,5 @@
 ﻿
-.\DL_Sysinternals.ps1
+#.\DL_Sysinternals.ps1
 
 Configuration EnablePowerShellLogging
 {
@@ -341,12 +341,12 @@ Param(
                 If (!(test-path $using:CheckDrive))
                 {
                     Write-Verbose ' is NOT in desired state.'
-                    New-Item -Path $using:WindowsEventLogsPath -ItemType directory
                     Return $false
                 }
                 Else
                 {   
                     Write-Verbose ' is in desired state.'
+                    New-Item -Path $using:WindowsEventLogsPath -ItemType directory
                     Return $true
                 }
 
