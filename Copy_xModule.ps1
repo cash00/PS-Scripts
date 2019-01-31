@@ -99,12 +99,12 @@ Configuration CopyxModule
 {
     param (
     [parameter(Mandatory=$true)]
-    [string[]]$hostname
+    [string[]]$computername
     )
 
     Import-DscResource -ModuleName PSDesiredStateConfiguration
 
-    Node $hostname
+    Node $computername
     {
         Script CheckIISAdministrationFolder
         {
