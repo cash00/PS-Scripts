@@ -500,7 +500,6 @@ Param(
             Ensure    = 'Present'
         }
         ### Enable Logging End##########################################################################################################
-        <#
         ### Disable PCT 1.0  Server##############################################
         Registry DisablePCT10Server1
         {
@@ -727,8 +726,8 @@ Param(
             ValueData = '0'
             ValueType = 'DWord'
             Ensure    = 'Present'
-        }#>
-        <#
+        }
+
         ### Disable RC4##############################################
         Registry DisableRC4128
         {
@@ -840,8 +839,8 @@ Param(
             ValueData = '0'
             ValueType = 'DWord'
             Ensure    = 'Present'
-        }#>
-        <#
+        }
+
         ### Disable AES128##############################################
         Registry DisableAES128
         {
@@ -860,8 +859,8 @@ Param(
             ValueData = '1'
             ValueType = 'DWord'
             Ensure    = 'Present'
-        }#>
-        <#
+        }
+
         ### Disable MD5 Hash##############################################
         Registry DisableMD5Hash
         {
@@ -880,7 +879,7 @@ Param(
             ValueData = '00000800'
             ValueType = 'DWord'
             Ensure    = 'Present'
-        }#>
+        }
 
         ### Cipher Suites Order##############################################
         <#
@@ -910,7 +909,7 @@ TLS_RSA_WITH_AES_128_CBC_SHA'
             Ensure    = 'Present'
         }
         #>
-        <#
+
         ### Enable Strong Authentication on .Net Framework version 3 and below##############################################
         Registry Enable64bitDNFW3
         {
@@ -947,8 +946,8 @@ TLS_RSA_WITH_AES_128_CBC_SHA'
             ValueData = '1'
             ValueType = 'DWord'
             Ensure    = 'Present'
-        }#>
-        <#
+        }
+
         ### Enable HTTP2##############################################
         Registry EnableHTTP21
         {
@@ -966,8 +965,8 @@ TLS_RSA_WITH_AES_128_CBC_SHA'
             ValueData = '1'
             ValueType = 'DWord'
             Ensure    = 'Present'
-        }#>
-        <#
+        }
+
         ### Disable HTTP Server Header##############################################
         Registry DisableHTTPServerHeader
         {
@@ -976,8 +975,8 @@ TLS_RSA_WITH_AES_128_CBC_SHA'
             ValueData = '1'
             ValueType = 'DWord'
             Ensure    = 'Present'
-        }#>
-        <#
+        }
+
         ### Enable Secure Protocols##############################################
         Registry EnableSecureProtocols32
         {
@@ -1013,7 +1012,7 @@ TLS_RSA_WITH_AES_128_CBC_SHA'
             ValueData = '00000800'
             ValueType = 'DWord'
             Ensure    = 'Present'
-        }#>
+        }
 
         ### Disable CRL Check##############################################
         Registry DisableCRLCheck
@@ -1050,4 +1049,3 @@ EnablePowerShellLogging -OutputPath 'C:\Temp\EnablePowerShellLogging' -Verbose
 ([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 256/256')
 
 #Start-DscConfiguration -Path C:\temp\EnablePowerShellLogging -Wait -Verbose -Force
-
