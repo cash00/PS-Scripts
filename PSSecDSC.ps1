@@ -284,6 +284,31 @@ Param(
             }
         }
 
+        Script SystemLogSize
+        {
+            GetScript = {
+                Return @{
+                    Result = Get-WinEvent -ListLog System | Out-String
+                }
+            }
+
+            TestScript = {
+                $Log = Get-WinEvent -ListLog System
+                If ($Log.MaximumSizeInBytes -lt ($using:EventLogSizeInMB * 1MB)) {
+                    Write-Verbose 'Event log [System] is NOT in desired state.'
+                    Return $false
+                } Else {   
+                    Write-Verbose 'Event log [System] is in desired state.'
+                    Return $true
+                }
+            }
+
+            SetScript = {
+                Write-Verbose 'Applying settings to event log [System].'
+                wevtutil set-log System /maxsize:$($using:EventLogSizeInMB * 1MB)
+            }
+        }
+
         Script SysmonLogSize
         {
             GetScript = {
@@ -310,7 +335,7 @@ Param(
             DependsOn = '[Script]CheckSysmonService'
         }
 
-        ### Transcription #####################################################
+        <#
         ### Check For G: drive #####################################################
         Script CheckGDrive
         {
@@ -352,16 +377,14 @@ Param(
 
             }
 
-        }
+        }#>
 
-        <#
         File WindowsEventLogs
         {
             DestinationPath = $WindowsEventLogsPath
             Type            = 'Directory'
             Ensure          = 'Present'
-            DependsOn = '[Script]CheckGDrive'
-        }#>
+        }
 
         Environment WindowsEventLogLocation #ResourceName
         {
@@ -370,6 +393,8 @@ Param(
             Path = $true
             Value = 'G:\WindowsEventLogs'
         }
+        
+        ### Transcription #####################################################
 
         ### Remove this resource if sending Transcripts to a remote share.
         File TranscriptsOutputDirectory
@@ -499,7 +524,17 @@ Param(
             ValueType = 'DWord'
             Ensure    = 'Present'
         }
-        ### Enable Logging End##########################################################################################################
+
+        ### Enable Schannel Logging####################################################################################################
+        Registry SchannelLogging
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL'
+            ValueName = 'EventLogging'
+            ValueData = '3'#1 (Basic) #7 (Verbose)
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
         ### Disable PCT 1.0  Server##############################################
         Registry DisablePCT10Server1
         {
@@ -728,6 +763,17 @@ Param(
             Ensure    = 'Present'
         }
 
+        ### Ciphers####################################################
+        ### Disable NULL##############################################
+        Registry DisableNULL
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\NULL'
+            ValueName = 'Enabled'
+            ValueData = '0'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
         ### Disable RC4##############################################
         Registry DisableRC4128
         {
@@ -793,10 +839,19 @@ Param(
             Ensure    = 'Present'
         }
 
-        ### Disable NULL##############################################
-        Registry DisableNULL
+        ### Disable DES##############################################
+        Registry DisableDES56
         {
-            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\NULL'
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\DES 56/56'
+            ValueName = 'Enabled'
+            ValueData = '0'
+            ValueType = 'DWord'
+            Ensure    = 'Present'
+        }
+
+        Registry DisableDES168
+        {
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\DES 168/168'
             ValueName = 'Enabled'
             ValueData = '0'
             ValueType = 'DWord'
@@ -822,31 +877,12 @@ Param(
             Ensure    = 'Present'
         }
 
-        ### Disable DES##############################################
-        Registry DisableDES56
-        {
-            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\DES 56/56'
-            ValueName = 'Enabled'
-            ValueData = '0'
-            ValueType = 'DWord'
-            Ensure    = 'Present'
-        }
-
-        Registry DisableDES168
-        {
-            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\DES 168/168'
-            ValueName = 'Enabled'
-            ValueData = '0'
-            ValueType = 'DWord'
-            Ensure    = 'Present'
-        }
-
         ### Disable AES128##############################################
         Registry DisableAES128
         {
-            Key       = 'HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 128/128'
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 128/128'
             ValueName = 'Enabled'
-            ValueData = '0'
+            ValueData = '1'
             ValueType = 'DWord'
             Ensure    = 'Present'
         }
@@ -854,13 +890,14 @@ Param(
         ### Enable AES256##############################################
         Registry EnableAES256
         {
-            Key       = 'HKLM:\System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 256/256'
+            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 256/256'
             ValueName = 'Enabled'
             ValueData = '1'
             ValueType = 'DWord'
             Ensure    = 'Present'
         }
 
+        ### Hash###########################################################
         ### Disable MD5 Hash##############################################
         Registry DisableMD5Hash
         {
@@ -871,6 +908,7 @@ Param(
             Ensure    = 'Present'
         }
 
+        ### Key Exchange###############################################################
         ### Disable Diffie Hellman##############################################
         Registry DisableDiffieHellman
         {
@@ -907,7 +945,7 @@ TLS_RSA_WITH_AES_256_CBC_SHA
 TLS_RSA_WITH_AES_128_CBC_SHA'
             ValueType = 'MultiString'
             Ensure    = 'Present'
-        }
+        }TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_AES_128_CBC_SHA
         #>
 
         ### Enable Strong Authentication on .Net Framework version 3 and below##############################################
