@@ -530,7 +530,7 @@ Param(
         {
             Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL'
             ValueName = 'EventLogging'
-            ValueData = '7'#1 (Basic) #7 (Verbose)
+            ValueData = '1'#1 (Basic) #7 (Verbose)
             ValueType = 'DWord'
             Ensure    = 'Present'
         }
@@ -654,7 +654,7 @@ Param(
         {
             Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0\Server'
             ValueName = 'Enabled'
-            ValueData = '1'
+            ValueData = '0'
             ValueType = 'DWord'
             Ensure    = 'Present'
         }
@@ -663,7 +663,7 @@ Param(
         {
             Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0\Server'
             ValueName = 'DisabledByDefault'
-            ValueData = '0'
+            ValueData = '1'
             ValueType = 'DWord'
             Ensure    = 'Present'
         }
@@ -673,7 +673,7 @@ Param(
         {
             Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0\Client'
             ValueName = 'Enabled'
-            ValueData = '0'
+            ValueData = '1'
             ValueType = 'DWord'
             Ensure    = 'Present'
         }
@@ -682,7 +682,7 @@ Param(
         {
             Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0\Client'
             ValueName = 'DisabledByDefault'
-            ValueData = '1'
+            ValueData = '0'
             ValueType = 'DWord'
             Ensure    = 'Present'
         }
@@ -692,7 +692,7 @@ Param(
         {
             Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1\Server'
             ValueName = 'Enabled'
-            ValueData = '1'
+            ValueData = '0'
             ValueType = 'DWord'
             Ensure    = 'Present'
         }
@@ -701,7 +701,7 @@ Param(
         {
             Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1\Server'
             ValueName = 'DisabledByDefault'
-            ValueData = '0'
+            ValueData = '1'
             ValueType = 'DWord'
             Ensure    = 'Present'
         }
@@ -918,9 +918,8 @@ Param(
             ValueType = 'DWord'
             Ensure    = 'Present'
         }
-
-        ### Cipher Suites Order##############################################
         <#
+        ### Cipher Suites Order##############################################
         Registry CipherSuitesOrder
         {
             Key       = 'HKLM:\System\CurrentControlSet\Control\Cryptography\Configuration\Local\SSL\00010002'
@@ -945,8 +944,7 @@ TLS_RSA_WITH_AES_256_CBC_SHA
 TLS_RSA_WITH_AES_128_CBC_SHA'
             ValueType = 'MultiString'
             Ensure    = 'Present'
-        }TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256,TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA,TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA,TLS_RSA_WITH_AES_256_GCM_SHA384,TLS_RSA_WITH_AES_128_GCM_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA256,TLS_RSA_WITH_AES_128_CBC_SHA256,TLS_RSA_WITH_AES_256_CBC_SHA,TLS_RSA_WITH_AES_128_CBC_SHA
-        #>
+        }#>
 
         ### Enable Strong Authentication on .Net Framework version 3 and below##############################################
         Registry UseStrong64DNFW3
@@ -1122,4 +1120,4 @@ EnablePowerShellLogging -OutputPath 'C:\Temp\EnablePowerShellLogging' -Verbose
 ([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 128/128')
 ([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 256/256')
 
-#Start-DscConfiguration -Path C:\temp\EnablePowerShellLogging -Wait -Verbose -Force
+Start-DscConfiguration -Path C:\temp\EnablePowerShellLogging -Wait -Verbose -Force
