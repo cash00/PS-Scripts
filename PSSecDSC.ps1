@@ -875,8 +875,8 @@ Param(
         Registry DisableDiffieHellman
         {
             Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\KeyExchangeAlgorithms\Diffie-Hellman'
-            ValueName = 'ServerMinKeyBitLength'
-            ValueData = '00000800'
+            ValueName = 'Enabled'
+            ValueData = '0'
             ValueType = 'DWord'
             Ensure    = 'Present'
         }
@@ -911,38 +911,74 @@ TLS_RSA_WITH_AES_128_CBC_SHA'
         #>
 
         ### Enable Strong Authentication on .Net Framework version 3 and below##############################################
-        Registry Enable64bitDNFW3
+        Registry UseStrong64DNFW3
         {
             Key       = 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\.NETFramework\v2.0.50727'
             ValueName = 'SchUseStrongCrypto'
             ValueData = '1'
             ValueType = 'DWord'
+            Ensure    = 'Absent'
+        }
+
+        Registry SysDef64DNFW3
+        {
+            Key       = 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\.NETFramework\v2.0.50727'
+            ValueName = 'SystemDefaultTlsVersions'
+            ValueData = '1'
+            ValueType = 'DWord'
             Ensure    = 'Present'
         }
 
-        Registry Enable32bitDNFW3
+        Registry UseStrong32DNFW3
         {
             Key       = 'HKLM:\SOFTWARE\Microsoft\.NETFramework\v2.0.50727'
             ValueName = 'SchUseStrongCrypto'
+            ValueData = '1'
+            ValueType = 'DWord'
+            Ensure    = 'Absent'
+        }
+
+        Registry SysDef32DNFW3
+        {
+            Key       = 'HKLM:\SOFTWARE\Microsoft\.NETFramework\v2.0.50727'
+            ValueName = 'SystemDefaultTlsVersions'
             ValueData = '1'
             ValueType = 'DWord'
             Ensure    = 'Present'
         }
 
         ### Enable Strong Authentication on .Net Framework version 4 and above##############################################
-        Registry Enable64bitDNFW4
+        Registry UseStrong64DNFW4
         {
             Key       = 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\.NETFramework\v4.0.30319'
             ValueName = 'SchUseStrongCrypto'
             ValueData = '1'
             ValueType = 'DWord'
+            Ensure    = 'Absent'
+        }
+
+        Registry SysDef64DNFW4
+        {
+            Key       = 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\.NETFramework\v4.0.30319'
+            ValueName = 'SystemDefaultTlsVersions'
+            ValueData = '1'
+            ValueType = 'DWord'
             Ensure    = 'Present'
         }
 
-        Registry Enable32bitDNFW4
+        Registry UseStrong32DNFW4
         {
             Key       = 'HKLM:\SOFTWARE\Microsoft\.NETFramework\v4.0.30319'
             ValueName = 'SchUseStrongCrypto'
+            ValueData = '1'
+            ValueType = 'DWord'
+            Ensure    = 'Absent'
+        }
+
+        Registry SysDef32DNFW4
+        {
+            Key       = 'HKLM:\SOFTWARE\Microsoft\.NETFramework\v4.0.30319'
+            ValueName = 'SystemDefaultTlsVersions'
             ValueData = '1'
             ValueType = 'DWord'
             Ensure    = 'Present'
@@ -982,7 +1018,7 @@ TLS_RSA_WITH_AES_128_CBC_SHA'
         {
             Key       = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp'
             ValueName = 'DefaultSecureProtocols'
-            ValueData = '00000800'
+            ValueData = '2048'
             ValueType = 'DWord'
             Ensure    = 'Present'
         }
@@ -991,7 +1027,7 @@ TLS_RSA_WITH_AES_128_CBC_SHA'
         {
             Key       = 'HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Internet Settings\WinHttp'
             ValueName = 'DefaultSecureProtocols'
-            ValueData = '00000800'
+            ValueData = '2048'
             ValueType = 'DWord'
             Ensure    = 'Present'
         }
@@ -1000,7 +1036,7 @@ TLS_RSA_WITH_AES_128_CBC_SHA'
         {
             Key       = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings'
             ValueName = 'SecureProtocols'
-            ValueData = '00000800'
+            ValueData = '2048'
             ValueType = 'DWord'
             Ensure    = 'Present'
         }
@@ -1009,7 +1045,7 @@ TLS_RSA_WITH_AES_128_CBC_SHA'
         {
             Key       = 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Internet Settings'
             ValueName = 'SecureProtocols'
-            ValueData = '00000800'
+            ValueData = '2048'
             ValueType = 'DWord'
             Ensure    = 'Present'
         }
