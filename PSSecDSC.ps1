@@ -530,7 +530,7 @@ Param(
         {
             Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL'
             ValueName = 'EventLogging'
-            ValueData = '3'#1 (Basic) #7 (Verbose)
+            ValueData = '7'#1 (Basic) #7 (Verbose)
             ValueType = 'DWord'
             Ensure    = 'Present'
         }
@@ -654,7 +654,7 @@ Param(
         {
             Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0\Server'
             ValueName = 'Enabled'
-            ValueData = '0'
+            ValueData = '1'
             ValueType = 'DWord'
             Ensure    = 'Present'
         }
@@ -663,7 +663,7 @@ Param(
         {
             Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.0\Server'
             ValueName = 'DisabledByDefault'
-            ValueData = '1'
+            ValueData = '0'
             ValueType = 'DWord'
             Ensure    = 'Present'
         }
@@ -692,7 +692,7 @@ Param(
         {
             Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1\Server'
             ValueName = 'Enabled'
-            ValueData = '0'
+            ValueData = '1'
             ValueType = 'DWord'
             Ensure    = 'Present'
         }
@@ -701,7 +701,7 @@ Param(
         {
             Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1\Server'
             ValueName = 'DisabledByDefault'
-            ValueData = '1'
+            ValueData = '0'
             ValueType = 'DWord'
             Ensure    = 'Present'
         }
@@ -711,7 +711,7 @@ Param(
         {
             Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1\Client'
             ValueName = 'Enabled'
-            ValueData = '0'
+            ValueData = '1'
             ValueType = 'DWord'
             Ensure    = 'Present'
         }
@@ -720,7 +720,7 @@ Param(
         {
             Key       = 'HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Protocols\TLS 1.1\Client'
             ValueName = 'DisabledByDefault'
-            ValueData = '1'
+            ValueData = '0'
             ValueType = 'DWord'
             Ensure    = 'Present'
         }
