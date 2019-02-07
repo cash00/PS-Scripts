@@ -80,7 +80,7 @@ Get-Module|ft -Property * -AutoSize
 
 Import-Module -Name Dism -Force -Verbose
 
-Import-Module -Name ServerManager -Force -Verbose
+#Import-Module -Name ServerManager -Force -Verbose
 "AFTER"
 Get-Module|ft -Property * -AutoSize
 

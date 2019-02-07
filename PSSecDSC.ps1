@@ -1,7 +1,7 @@
 ﻿
 #.\DL_Sysinternals.ps1
 
-Configuration EnablePowerShellLogging
+Configuration PSSecDSC
 {
 Param(
     [string]$TranscriptPath = 'C:\Temp\PSTranscripts',
@@ -1101,7 +1101,8 @@ TLS_RSA_WITH_AES_128_CBC_SHA'
 }
 
 cd c:\temp
-EnablePowerShellLogging -OutputPath 'C:\Temp\EnablePowerShellLogging' -Verbose
+PSSecDSC -OutputPath 'C:\Temp\PSSecDSC' -Verbose
+
 ([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 128/128')
 ([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 40/128')
 ([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 56/128')
@@ -1120,4 +1121,4 @@ EnablePowerShellLogging -OutputPath 'C:\Temp\EnablePowerShellLogging' -Verbose
 ([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 128/128')
 ([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('System\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 256/256')
 
-Start-DscConfiguration -Path C:\temp\EnablePowerShellLogging -Wait -Verbose -Force
+#Start-DscConfiguration -Path C:\temp\PSSecDSC -Wait -Verbose -Force

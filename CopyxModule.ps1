@@ -35,7 +35,7 @@ $Script = $MyInvocation.MyCommand.Name.TrimEnd(".ps1")
 
 if($Script -eq "")
 {
-$Script = "Copy_xModule" #<REPLACE WITH THE SCRIPT NAME>
+$Script = "CopyxModule" #<REPLACE WITH THE SCRIPT NAME>
 }
 
 if ($DNSSUF.UseSuffixSearchList -eq $True)
@@ -290,7 +290,7 @@ Configuration CopyxModule
     }#End of Node localhost
 }
 
-CopyxModule -OutputPath 'C:\Temp\Copy_xModule\' -computername $hostname -verbose
+CopyxModule -OutputPath 'C:\Temp\CopyxModule\' -computername $hostname -verbose
 
 function Do-Something
 {
@@ -306,7 +306,7 @@ if (!(test-path $path))
 
 try{
 
-    Start-DscConfiguration -Path C:\Temp\Copy_xModule\ -Wait -Verbose -Force
+    Start-DscConfiguration -Path C:\Temp\CopyxModule\ -Wait -Verbose -Force
 
     Get-DscResource -Module IISAdministration|ft -AutoSize
     Get-DscResource -Module RDWebClientManagement|ft -AutoSize
