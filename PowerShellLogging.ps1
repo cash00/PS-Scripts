@@ -337,21 +337,37 @@ Param(
 
             SetScript = {
                 Write-Verbose 'Applying settings to event log [Microsoft-Windows-PowerShell/Operational].'
-                wevtutil set-log Microsoft-Windows-PowerShell/Operational /enabled /AutoBackup:false /Retention:false /maxsize:$($using:EventLogSizeInMB * 1MB)
+                wevtutil set-log Microsoft-Windows-PowerShell/Operational /AutoBackup:false /Retention:false /maxsize:$($using:EventLogSizeInMB * 1MB)
             }
         }
-
-        Registry PowerShellEventLogReport
+        
+        Script RegPowerShellEventLogReport
         {
-            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational'
-            ValueName = '(Default)'
-            Ensure    = 'Present'
-        }
+            GetScript = {
+                Return @{
+                    Result = Test-Path HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational | Out-String
+                }
+            }
 
+            TestScript = {
+                $Key = Test-Path HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational
+                If (!$Key) {
+                    Write-Verbose 'Registry [HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational] is NOT in desired state'
+                    Return $false
+                } Else {   
+                    Write-Verbose 'Registry [HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational] is in desired state'
+                    Return $true
+                }
+            }
+
+            SetScript = {
+                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational]'
+                ([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational')
+            }
+        }
     }#End of Node localhost
 
 }
-
 
 function Do-Something
 {
@@ -368,7 +384,7 @@ if (!(test-path $path))
 try{
     cd c:\temp
     PowerShellLogging -OutputPath 'C:\Temp\PowerShellLogging' -Verbose
-    #Start-DscConfiguration -Path C:\temp\PowerShellLogging -Wait -Verbose -Force
+    Start-DscConfiguration -Path C:\temp\PowerShellLogging -Wait -Verbose -Force
 }
 catch
 {
