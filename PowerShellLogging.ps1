@@ -177,7 +177,8 @@ Param(
             Ensure          = 'Present'
         }
 
-        Environment WindowsEventLogLocation #ResourceName
+        ### Environment#####################################################
+        Environment WindowsEventLogLocation
         {
             Name = 'WindowsEventLogs'
             Ensure = 'Present'
@@ -192,77 +193,6 @@ Param(
             DestinationPath = $TranscriptPath
             Type            = 'Directory'
             Ensure          = 'Present'
-        }
-
-        ### Remove this resource if sending transcripts to a remote share.
-        Script TranscriptsOutputDirectoryPermissions
-        {
-            GetScript = {
-                $acl = Get-Acl $using:TranscriptPath
-                Return @{
-                    Result = $acl.Sddl
-                }
-            }
-            TestScript = {
-                $acl = Get-Acl $using:TranscriptPath
-                Write-Verbose "Transcript directory permissions: $($acl.Sddl)"
-                If ($acl.Sddl -ne 'O:BAG:BAD:AI(A;OICI;0x1301bf;;;BU)') {
-                    Write-Verbose 'Transcript directory permissions are NOT in desired state.'
-                    Return $false
-                } Else {   
-                    Write-Verbose 'Transcript directory permissions are in desired state.'
-                    Return $true
-                }
-            }
-            SetScript = {
-                Write-Verbose 'Applying transcript directory permissions.'
-                # Remove inherited permissions.
-                # Allow Administrators full control.
-                # Allow SYSTEM full control.
-                # Allow Users Read and Execute.
-                # Allow Users Modify.
-                $acl = Get-Acl $using:TranscriptPath
-                $acl.SetSecurityDescriptorSddlForm('O:BAG:BAD:AI(A;OICI;0x1301bf;;;BU)') #(A;OICIID;FA;;;SY)(A;OICIID;0x1200a9;;;BU)
-                $acl | Set-Acl $using:TranscriptPath -Verbose
-            }
-            DependsOn = '[File]TranscriptsOutputDirectory'
-        }
-
-        ### Remove this resource if sending transcripts to a remote share.
-        ### NOTE: This will generate errors due to permissions of the local transcript directory.
-        Script TranscriptsDirectoryTrim
-        {
-            GetScript = {
-                Return @{
-                    Result = $using:TranscriptPath
-                }
-            }
-            TestScript = {
-                $ErrorActionPreference = 'Stop'
-                Try {
-                    $OldContent = Get-ChildItem $using:TranscriptPath -Recurse | Where-Object {$_.LastWriteTime -lt (Get-Date).AddDays($using:TranscriptDays * -1)}
-                }
-                Catch {
-                    Write-Warning 'Access denied to some of the transcript files.'
-                }
-                If ($OldContent) {
-                    Write-Verbose "Transcript directory contains content older than $($using:TranscriptDays) days."
-                    Return $false
-                } Else {   
-                    Write-Verbose "Transcript directory DOES NOT contain content older than $($using:TranscriptDays) days."
-                    Return $true
-                }
-            }
-            SetScript = {
-                $ErrorActionPreference = 'Stop'
-                Try {
-                    Get-ChildItem $using:TranscriptPath -Recurse | Where-Object {$_.LastWriteTime -lt (Get-Date).AddDays($using:TranscriptDays * -1)} | Remove-Item -Force -Confirm:$false -Verbose
-                }
-                Catch {
-                    Write-Warning 'Access denied to some of the transcript files.'
-                }
-            }
-            DependsOn = '[File]TranscriptsOutputDirectory'
         }
 
         Registry EnableTranscripting
@@ -337,21 +267,37 @@ Param(
 
             SetScript = {
                 Write-Verbose 'Applying settings to event log [Microsoft-Windows-PowerShell/Operational].'
-                wevtutil set-log Microsoft-Windows-PowerShell/Operational /enabled /AutoBackup:false /Retention:false /maxsize:$($using:EventLogSizeInMB * 1MB)
+                wevtutil set-log Microsoft-Windows-PowerShell/Operational /AutoBackup:false /Retention:false /maxsize:$($using:EventLogSizeInMB * 1MB)
             }
         }
-
-        Registry PowerShellEventLogReport
+        
+        ### EventLog Report KEY##############################################
+        Script RegPowerShellEventLogReport
         {
-            Key       = 'HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational'
-            ValueName = '(Default)'
-            Ensure    = 'Present'
+            GetScript = {
+                Return @{
+                    Result = Test-Path HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational | Out-String
+                }
+            }
+
+            TestScript = {
+                $Key = Test-Path HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational
+                If (!$Key) {
+                    Write-Verbose 'Registry [HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational] is NOT in desired state'
+                    Return $false
+                } Else {   
+                    Write-Verbose 'Registry [HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational] is in desired state'
+                    Return $true
+                }
+            }
+
+            SetScript = {
+                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational]'
+                ([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational')
+            }
         }
-
     }#End of Node localhost
-
 }
-
 
 function Do-Something
 {
@@ -366,9 +312,9 @@ if (!(test-path $path))
 }
 
 try{
-    cd c:\temp
+    cd C:\Temp
     PowerShellLogging -OutputPath 'C:\Temp\PowerShellLogging' -Verbose
-    #Start-DscConfiguration -Path C:\temp\PowerShellLogging -Wait -Verbose -Force
+    Start-DscConfiguration -Path C:\Temp\PowerShellLogging -Wait -Verbose -Force
 }
 catch
 {
@@ -397,6 +343,3 @@ $edatetime = Get-Date -Format 'yyyyMMdd_HHmmss'
 
 Stop-Transcript
 }
-
-
-
