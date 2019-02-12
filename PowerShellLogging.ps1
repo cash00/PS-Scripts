@@ -122,7 +122,7 @@ Param(
         {
             Key       = 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell'
             ValueName = 'ExecutionPolicy'
-            ValueData = 'Unrestricted'
+            ValueData = 'RemoteSigned' #'Unrestricted'
             ValueType = 'String'
             Ensure    = 'Present'
         }
