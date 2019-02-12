@@ -44,18 +44,18 @@ foreach ($dns in $DNSSUF.DNSSuffixesToAppend)
 {
     if ($dns -eq $compdomain)
     {
-    $path = '\\'+$compdomain+'\sysvol\'+$compdomain+'\scripts\'+$Script
-    break;
+        $path = '\\'+$compdomain+'\sysvol\'+$compdomain+'\scripts\'+$Script
+        break;
     }
     else
     {
-    $path = '\\'+$hostname+'\C$\temp\'+$Script
+        $path = '\\'+$hostname+'\C$\temp\'+$Script
     }
 }
 }
 else
 {
-$path = '\\'+$hostname+'\C$\temp\'+$Script
+    $path = '\\'+$hostname+'\C$\temp\'+$Script
 }
 #Uncomment below line to test script on local machine
 $path = '\\'+$hostname+'\C$\temp\'+$Script
@@ -168,7 +168,6 @@ Param(
             Ensure    = 'Present'
         }
 
-
         ### Logs Directory#####################################################
         File WindowsEventLogs
         {
@@ -185,7 +184,7 @@ Param(
             Path = $true
             Value = 'G:\WindowsEventLogs'
         }
-
+        
         ### Transcription #####################################################
         ### Remove this resource if sending Transcripts to a remote share.
         File TranscriptsOutputDirectory
@@ -259,7 +258,7 @@ Param(
                 If ($Log.LogMode -ne 'AutoBackup' -or $Log.MaximumSizeInBytes -lt ($using:EventLogSizeInMB * 1MB)) {
                     Write-Verbose 'Event log [Microsoft-Windows-PowerShell/Operational] is NOT in desired state.'
                     Return $false
-                } Else {
+                } Else {   
                     Write-Verbose 'Event log [Microsoft-Windows-PowerShell/Operational] is in desired state.'
                     Return $true
                 }
@@ -270,7 +269,7 @@ Param(
                 wevtutil set-log Microsoft-Windows-PowerShell/Operational /AutoBackup:false /Retention:false /maxsize:$($using:EventLogSizeInMB * 1MB)
             }
         }
-
+        
         ### EventLog Report KEY##############################################
         Script RegPowerShellEventLogReport
         {
@@ -285,18 +284,11 @@ Param(
                 If (!$Key) {
                     Write-Verbose 'Registry [HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational] is NOT in desired state'
                     Return $false
-                } Else {
+                } Else {   
                     Write-Verbose 'Registry [HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational] is in desired state'
                     Return $true
                 }
             }
-
-            SetScript = {
-                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational]'
-                ([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational')
-            }
-        }
-    }#End of Node localhost
 
             SetScript = {
                 Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational]'
