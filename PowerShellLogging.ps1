@@ -100,7 +100,7 @@ Configuration PowerShellLogging
 Param(
     [string]$TranscriptPath = 'C:\Temp\PSTranscripts',
     [ValidateRange(1,365)][int]$TranscriptDays = 14,
-    [ValidateRange(1,1024)][int]$EventLogSizeInMB = 2048,
+    [ValidateRange(1,2048)][int]$EventLogSizeInMB = 2048,
     [string]$WindowsEventLogsPath = 'G:\WindowsEventLogs'
 )
 

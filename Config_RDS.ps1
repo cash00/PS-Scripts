@@ -1,14 +1,14 @@
 ﻿#$hostname = $env:computername
-$hostname = [System.Net.Dns]::GetHostByName(($env:computerName)).Hostname
+$FQDNhostname = [System.Net.Dns]::GetHostByName(($env:computerName)).Hostname
 
 $data = @{
 AllNodes = @()
 
 RDSData = @{
-    ConnectionBroker = $hostname
-    LicenseServer = $hostname
-    SessionHost = $hostname
-    WebAccessServer = $hostname
+    ConnectionBroker = $FQDNhostname
+    LicenseServer = $FQDNhostname
+    SessionHost = $FQDNhostname
+    WebAccessServer = $FQDNhostname
     CollectionName = 'WFH'
     CollectionDescription = 'WFH Collection'
     DisconnectedSessionLimitMin = 30
@@ -34,8 +34,6 @@ RDSData = @{
 
 #######################################################################################################
 
-$computername = [System.Net.Dns]::GetHostByName(($env:computerName)).Hostname
-
 Configuration RDS {
  
 param (
@@ -43,7 +41,7 @@ param (
 
 Import-DscResource -ModuleName PSDesiredStateConfiguration, @{ModuleName='xRemoteDesktopSessionHost';ModuleVersion="1.8.0.0"}
 
-Node $computername {
+Node $FQDNhostname {
     $RDData = $data.RDSData
 
     WindowsFeature RDSConnectionBroker {
