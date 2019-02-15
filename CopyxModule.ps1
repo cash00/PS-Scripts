@@ -40,28 +40,28 @@ $Script = "CopyxModule" #<REPLACE WITH THE SCRIPT NAME>
 
 if ($DNSSUF.UseSuffixSearchList -eq $True)
 {
-foreach ($dns in $DNSSUF.DNSSuffixesToAppend)
-{
-    if ($dns -eq $compdomain)
+    foreach ($dns in $DNSSUF.DNSSuffixesToAppend)
     {
-    $path = '\\'+$compdomain+'\sysvol\'+$compdomain+'\scripts\'+$Script
-    break;
+        if ($dns -eq $compdomain)
+        {
+            $path = '\\'+$compdomain+'\sysvol\'+$compdomain+'\scripts\'+$Script
+            break;
+        }
+        else
+        {
+            $path = '\\'+$hostname+'\C$\temp\'+$Script
+        }
     }
-    else
-    {
-    $path = '\\'+$hostname+'\C$\temp\'+$Script
-    }
-}
 }
 else
 {
-$path = '\\'+$hostname+'\C$\temp\'+$Script
+    $path = '\\'+$hostname+'\C$\temp\'+$Script
 }
 #Uncomment below line to test script on local machine
-#$path = '\\'+$hostname+'\C$\temp\'+$Script
+$path = '\\'+$hostname+'\C$\temp\'+$Script
 
 $outlog = "$path\$hostname"+"_"+"$Script"+"_"+"$datetime.txt"
-$errlog = "C:\temp\$Script"+"Err_"+"$datetime.txt"
+$errlog = "$path\$hostname"+"_"+"$Script"+"_Err_"+"$datetime.txt"
 #$outcsv = "$path\$Script"+"_"+"$datetime.csv"
 $outcsv = "$path\$Script.csv"
 
@@ -106,6 +106,53 @@ Configuration CopyxModule
 
     Node $computername
     {
+
+        Script CheckSysinternalsSuiteFolder
+        {
+            GetScript = {
+                Return @{
+                    Result = Test-Path 'C:\SysinternalsSuite' | Out-String
+                }
+            }
+            TestScript = {
+                If ((Test-Path 'C:\SysinternalsSuite') -eq $true)
+                {
+                    Write-Verbose 'C:\SysinternalsSuite is present'
+                    Return $false
+                }
+                else
+                {
+                    Write-Verbose 'C:\SysinternalsSuite is NOT present'
+                    Return $true
+                }
+            }
+            SetScript = {
+                Write-Verbose 'Folder present'
+                Return $false
+            }
+        }
+
+        File SysinternalsSuite
+        {
+            DestinationPath = 'C:\Temp\SysinternalsSuite.zip'
+            Type            = 'File'
+            #Ensure          = 'Present'
+            DependsOn = '[Script]CheckSysinternalsSuiteFolder'
+        }
+
+        Archive UnzipSysinternalsSuiteFile #Unzip file
+        {
+            Destination = 'C:\SysinternalsSuite'
+            Path = 'C:\Temp\SysinternalsSuite.zip'
+            Checksum = 'SHA-256'
+            Validate = $true
+            Force = $true
+            Ensure = 'Present'
+            DependsOn = '[File]SysinternalsSuite'
+        }
+
+########################################################################################################################
+
         Script CheckIISAdministrationFolder
         {
             GetScript = {
@@ -290,8 +337,6 @@ Configuration CopyxModule
     }#End of Node localhost
 }
 
-CopyxModule -OutputPath 'C:\Temp\CopyxModule\' -computername $hostname -verbose
-
 function Do-Something
 {
 [cmdletbinding()]
@@ -306,7 +351,8 @@ if (!(test-path $path))
 
 try{
 
-    Start-DscConfiguration -Path C:\Temp\CopyxModule\ -Wait -Verbose -Force
+    CopyxModule -OutputPath 'C:\Temp\CopyxModule' -computername $hostname -verbose
+    Start-DscConfiguration -Path 'C:\Temp\CopyxModule' -Wait -Verbose -Force
 
     Get-DscResource -Module IISAdministration|ft -AutoSize
     Get-DscResource -Module RDWebClientManagement|ft -AutoSize
