@@ -40,18 +40,18 @@ if($Script -eq "")
 
 if ($DNSSUF.UseSuffixSearchList -eq $True)
 {
-foreach ($dns in $DNSSUF.DNSSuffixesToAppend)
-{
-    if ($dns -eq $compdomain)
+    foreach ($dns in $DNSSUF.DNSSuffixesToAppend)
     {
-        $path = '\\'+$compdomain+'\sysvol\'+$compdomain+'\scripts\'+$Script
-        break;
+        if ($dns -eq $compdomain)
+        {
+            $path = '\\'+$compdomain+'\sysvol\'+$compdomain+'\scripts\'+$Script
+            break;
+        }
+        else
+        {
+            $path = '\\'+$hostname+'\C$\temp\'+$Script
+        }
     }
-    else
-    {
-        $path = '\\'+$hostname+'\C$\temp\'+$Script
-    }
-}
 }
 else
 {
@@ -61,7 +61,8 @@ else
 $path = '\\'+$hostname+'\C$\temp\'+$Script
 
 $outlog = "$path\$hostname"+"_"+"$Script"+"_"+"$datetime.txt"
-$errlog = "C:\temp\$Script"+"Err_"+"$datetime.txt"
+$errlog = "$path\$hostname"+"_"+"$Script"+"_Err_"+"$datetime.txt"
+#$errlog = "C:\temp\$Script"+"_Err_"+"$datetime.txt"
 $outcsv = "$path\$Script"+"_"+"$datetime.csv"
 #$outcsv = "$path\$Script.csv"
 
@@ -255,7 +256,7 @@ Param(
 
             TestScript = {
                 $Log = Get-WinEvent -ListLog Microsoft-Windows-PowerShell/Operational
-                If ($Log.LogMode -ne 'AutoBackup' -or $Log.MaximumSizeInBytes -lt ($using:EventLogSizeInMB * 1MB)) {
+                If ($Log.LogMode -ne 'Circular' -or $Log.MaximumSizeInBytes -lt ($using:EventLogSizeInMB * 1MB)) {
                     Write-Verbose 'Event log [Microsoft-Windows-PowerShell/Operational] is NOT in desired state.'
                     Return $false
                 } Else {   

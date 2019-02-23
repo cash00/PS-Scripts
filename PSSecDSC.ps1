@@ -35,7 +35,7 @@ $Script = $MyInvocation.MyCommand.Name.TrimEnd(".ps1")
 
 if($Script -eq "")
 {
-$Script = "Set_LCM_RDS" #<REPLACE WITH THE SCRIPT NAME>
+$Script = "PSSecDSC" #<REPLACE WITH THE SCRIPT NAME>
 }
 
 if ($DNSSUF.UseSuffixSearchList -eq $True)
@@ -252,7 +252,7 @@ Param(
             }
 
             SetScript = {
-                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational]'
+                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC2 40/128]'
                 ([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC2 40/128')
             }
         }
@@ -278,7 +278,7 @@ Param(
             }
 
             SetScript = {
-                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational]'
+                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC2 56/128]'
                 ([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC2 56/128')
             }
         }
@@ -304,7 +304,7 @@ Param(
             }
 
             SetScript = {
-                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational]'
+                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC2 128/128]'
                 ([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC2 128/128')
             }
         }
@@ -330,7 +330,7 @@ Param(
             }
 
             SetScript = {
-                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational]'
+                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 40/128]'
                 ([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 40/128')
             }
         }
@@ -356,7 +356,7 @@ Param(
             }
 
             SetScript = {
-                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational]'
+                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 56/128]'
                 ([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 56/128')
             }
         }
@@ -382,7 +382,7 @@ Param(
             }
 
             SetScript = {
-                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational]'
+                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 64/128]'
                 ([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 64/128')
             }
         }
@@ -408,7 +408,7 @@ Param(
             }
 
             SetScript = {
-                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational]'
+                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 128/128]'
                 ([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\RC4 128/128')
             }
         }
@@ -434,7 +434,7 @@ Param(
             }
 
             SetScript = {
-                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational]'
+                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\DES 56/56]'
                 ([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\DES 56/56')
             }
         }
@@ -460,7 +460,7 @@ Param(
             }
 
             SetScript = {
-                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational]'
+                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\DES 168/168]'
                 ([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\DES 168/168')
             }
         }
@@ -486,7 +486,7 @@ Param(
             }
 
             SetScript = {
-                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational]'
+                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\Triple DES 112]'
                 ([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\Triple DES 112')
             }
         }
@@ -512,7 +512,7 @@ Param(
             }
 
             SetScript = {
-                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational]'
+                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\Triple DES 168]'
                 ([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\Triple DES 168')
             }
         }
@@ -538,7 +538,7 @@ Param(
             }
 
             SetScript = {
-                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational]'
+                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 128/128]'
                 ([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 128/128')
             }
         }
@@ -564,7 +564,7 @@ Param(
             }
 
             SetScript = {
-                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Services\EventLog\Microsoft-Windows-PowerShell/Operational]'
+                Write-Verbose 'Creating registry KEY [HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 256/256]'
                 ([Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$env:COMPUTERNAME)).CreateSubKey('SYSTEM\CurrentControlSet\Control\SecurityProviders\SCHANNEL\Ciphers\AES 256/256')
             }
         }
