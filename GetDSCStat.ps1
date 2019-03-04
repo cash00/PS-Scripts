@@ -58,7 +58,7 @@ else
     $path = '\\'+$hostname+'\C$\temp\'+$Script
 }
 #Uncomment below line to test script on local machine
-$path = '\\'+$hostname+'\C$\temp\'+$Script
+#$path = '\\'+$hostname+'\C$\temp\'+$Script
 
 $outlog = "$path\$hostname"+"_"+"$Script"+"_"+"$datetime.txt"
 $errlog = "$path\$hostname"+"_"+"$Script"+"_Err_"+"$datetime.txt"
@@ -125,7 +125,6 @@ catch
 
 try{
     $psco = [pscustomobject]@{Name = $hostname ;Status = $dsccs.Status; StartDate = $dsccs.StartDate; Type = $dsccs.Type; Mode = $dsccs.Mode; RebootRequested = $dsccs.RebootRequested; NumberOfResources = $dsccs.NumberOfResources;}
-    $psco
     $psco | Export-Csv -NoTypeInformation -Path $outhncsv -Append -ErrorAction Continue -Force
     $psco | Export-Csv -NoTypeInformation -Path $outcsv -Append -ErrorAction Continue -Force
 }
