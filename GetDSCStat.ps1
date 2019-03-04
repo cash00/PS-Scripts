@@ -124,7 +124,7 @@ catch
 }
 
 try{
-    $psco = [pscustomobject]@{Status = $dsccs.Status; StartDate = $dsccs.StartDate; Type = $dsccs.Type; Mode = $dsccs.Mode; RebootRequested = $dsccs.RebootRequested; NumberOfResources = $dsccs.NumberOfResources;}
+    $psco = [pscustomobject]@{Name = $hostname ;Status = $dsccs.Status; StartDate = $dsccs.StartDate; Type = $dsccs.Type; Mode = $dsccs.Mode; RebootRequested = $dsccs.RebootRequested; NumberOfResources = $dsccs.NumberOfResources;}
     $psco
     $psco | Export-Csv -NoTypeInformation -Path $outhncsv -Append -ErrorAction Continue -Force
     $psco | Export-Csv -NoTypeInformation -Path $outcsv -Append -ErrorAction Continue -Force
