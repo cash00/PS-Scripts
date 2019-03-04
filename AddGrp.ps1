@@ -11,7 +11,7 @@ Param(
         xGroup LocalAdminGrp
         {
             GroupName = 'Administrators'
-            MembersToInclude = 'VEGAS\RDS Test'
+            MembersToInclude = '\RDS Test'
         }
     }
 }
