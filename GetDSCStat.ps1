@@ -111,6 +111,7 @@ if (!(test-path $path))
 
 try{
     $dsccs = Get-DscConfigurationStatus
+    $RNIDS = $dsccs.ResourcesNotInDesiredState.ResourceId
 }
 catch
 {
@@ -124,7 +125,7 @@ catch
 }
 
 try{
-    $psco = [pscustomobject]@{Name = $hostname ;Status = $dsccs.Status; StartDate = $dsccs.StartDate; Type = $dsccs.Type; Mode = $dsccs.Mode; RebootRequested = $dsccs.RebootRequested; NumberOfResources = $dsccs.NumberOfResources;}
+    $psco = [pscustomobject]@{Name = $hostname ;Status = $dsccs.Status; RebootRequested = $dsccs.RebootRequested; Error = $dsccs.Error; ResourcesNotInDesiredState = $dsccs.ResourcesNotInDesiredState.ResourceId; MetaData = $dsccs.MetaData}
     $psco | Export-Csv -NoTypeInformation -Path $outhncsv -Append -ErrorAction Continue -Force
     $psco | Export-Csv -NoTypeInformation -Path $outcsv -Append -ErrorAction Continue -Force
 }
