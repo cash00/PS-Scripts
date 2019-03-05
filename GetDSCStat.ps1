@@ -111,7 +111,14 @@ if (!(test-path $path))
 
 try{
     $dsccs = Get-DscConfigurationStatus
-    $RNIDS = $dsccs.ResourcesNotInDesiredState.ResourceId
+    $RNIDS = $dsccs.ResourcesNotInDesiredState
+
+    write-host("using forEach Loop")
+    foreach ($element in $RNIDS)
+    {
+      $element
+    }
+
 }
 catch
 {
