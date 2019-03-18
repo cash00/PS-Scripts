@@ -110,15 +110,12 @@ if (!(test-path $path))
     $psco = @{}
 
 try{
-    $dsccs = Get-DscConfigurationStatus
-    $RNIDS = $dsccs.ResourcesNotInDesiredState
-
-    write-host("using forEach Loop")
-    foreach ($element in $RNIDS)
-    {
-      $element
-    }
-
+    $i = 0
+    do{
+        $Error.Clear()
+        $dsccs = Get-DscConfigurationStatus
+        $i++
+    }until($Error.Count -eq 0 -or $i -gt 5)
 }
 catch
 {
