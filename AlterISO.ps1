@@ -17,7 +17,7 @@ $oscdimg  = "$tools\oscdimg.exe"
 
 # create a temp folder for extracting the existing iso.
 #$workspace = "{0}\{1}" -f $env:temp, [system.guid]::newguid().tostring().split('-')[0]
-$workspace = "C:\SEPM 14.2" #Folders/Files to create ISO
+$workspace = "C:\SEPM14.2" #Folders/Files to create ISO
 #new-item -type directory -path $workspace
 
 # extract the existing iso to the temporary folder.
