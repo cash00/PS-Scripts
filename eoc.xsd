@@ -1,0 +1,24 @@
+<EOC creator="Creator" version="1.1" id="60">
+<DataSource name="Third-Party Provider" id="23" version="1.0"/>
+<ScanType>FULL_SCAN</ScanType>
+<RemediationAction>REMEDIATE</RemediationAction>
+	<Threat category="Suspects" type="to_investigate" severity="Medium" time="2017-01-29 4:54:01 PM">
+		<Description>Very basic test to search by hash</Description>
+		<Attacker></Attacker>
+	</Threat>
+	<Activity>
+		<OS id="1" name="" version="" patch="">
+			<Process></Process>
+			<Files>
+				<File name="suspicious_1" action="write">
+					<Hash name="SHA1" value="3c6250da5edf6b2e8d1a3930aa97a444bf3ba3de"/>
+				</File>
+				<File name="suspicious_2" action="write">
+					<Hash name="SHA1" value="374a884f7b650276df98bfde7d7efdaa6c4da27b"/>
+				</File>
+			</Files>
+			<Registry></Registry>
+			<Network></Network>
+		</OS>
+	</Activity>
+</EOC>
