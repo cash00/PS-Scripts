@@ -1,7 +1,7 @@
 ﻿# paths to media.
 #$media = 'c:\tasksequencemedia'
 #$old   = "C:\Users\admin\Desktop\Untitled.iso"
-$new   = "C:\Users\admin\Desktop\VisualStudioEnt2017.iso" #ISO file name
+$new   = "C:\Temp\SEPM14.2.iso" #ISO file name
 
 # paths to tools.
 $tools    = 'C:\Program Files (x86)\Windows Kits\10\Assessment and Deployment Kit\Deployment Tools\amd64\oscdimg'
@@ -17,7 +17,7 @@ $oscdimg  = "$tools\oscdimg.exe"
 
 # create a temp folder for extracting the existing iso.
 #$workspace = "{0}\{1}" -f $env:temp, [system.guid]::newguid().tostring().split('-')[0]
-$workspace = "C:\VisualStudioEnt2017" #Folders/Files to create ISO
+$workspace = "C:\SEPM 14.2" #Folders/Files to create ISO
 #new-item -type directory -path $workspace
 
 # extract the existing iso to the temporary folder.
