@@ -312,6 +312,8 @@ if (!(test-path $path))
 }
 
 try{
+    Stop-DscConfiguration -Force -Verbose
+    Start-Sleep -Seconds 5
     cd C:\Temp
     PowerShellLogging -OutputPath 'C:\Temp\PowerShellLogging' -Verbose
     Start-DscConfiguration -Path C:\Temp\PowerShellLogging -Wait -Verbose -Force
