@@ -2,7 +2,7 @@
 $slackuri = 'https://hooks.slack.com/services/'
 $ChannelID = '' #right click channel
 
-$data = Get-Content -Path C:\Users\admin\Desktop\Slack_JSON_test.JSON
+$data = Get-Content -Path .\Slack_JSON_test.JSON
 
 $contype = 'application/json'
 $meth = 'Post'
